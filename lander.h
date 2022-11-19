@@ -3,6 +3,7 @@
 
 #include "display.h"
 #include "buttons.h"
+#include "math.h"
 #include <boolstd.h>
 
 struct lander_t{
