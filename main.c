@@ -1,22 +1,37 @@
+#include "display.h"
+#include "game_control.h"
 #include "interrupts.h"
 #include "intervalTimer.h"
+#include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
 
-#define TICK_PERIOD 50E-3
+#define TICK_PERIOD 80E-3
 
 // game isr that calls lunar_control_tick every 50ms.
 // TODO: We might need to go faster, we should see how fast the game plays this
 // way.
 void game_isr() {
   intervalTimer_ackInterrupt(INTERVAL_TIMER_0);
-  lander_control_tick();
+  gameControl_tick();
 }
 
 int main() {
 
+  double value;
+  double result = 69;
+
+  /* Assign the value we will find the tan of */
+  value = 0.5;
+
+  /* Calculate the Tangent of value */
+  result = tan(value);
+
+  /* Display the result of the calculation */
+  printf("The Tangent of %f is %f\n", value, result);
+
   display_init();
-  lander_control_init();
+  gameControl_init();
 
   // Initialize timer interrupts
   interrupts_init();
@@ -28,7 +43,7 @@ int main() {
   intervalTimer_start(INTERVAL_TIMER_0);
 
   // Main game loop
-  while (1)
-    ;
+  while (1) {
+  }
   return 0;
 }
