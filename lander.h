@@ -17,8 +17,8 @@ struct lander_t{
 void lander_init();
 
 //calculates the x and y thrust values given the current angle
-int32_t get_thrust_y();
-int32_t get_thrust_x();
+double get_thrust_y();
+double get_thrust_x();
 
 //draw the lander at the current angle
 void draw_lander(display_point_t corner);
@@ -31,6 +31,7 @@ void lean_right();
 
 void thrust();
 
+void draw_lander();
 
 display_point_t get_location();
 
