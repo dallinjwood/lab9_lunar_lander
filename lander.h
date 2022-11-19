@@ -3,7 +3,7 @@
 
 #include "display.h"
 #include "buttons.h"
-#include <boolstd.h>
+#include <stdbool.h>
 
 struct lander_t{
     double angle;
@@ -11,7 +11,7 @@ struct lander_t{
     int32_t vertical_velocity;
     int32_t horizontal_velocity;
     bool has_landed;
-}
+};
 
 void lander_init();
 
