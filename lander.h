@@ -4,7 +4,7 @@
 #include "display.h"
 #include "buttons.h"
 #include "math.h"
-#include <boolstd.h>
+#include <stdbool.h>
 
 struct lander_t{
     double angle;
