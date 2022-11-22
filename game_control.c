@@ -2,9 +2,10 @@
 #include "buttons.h"
 #include "display.h"
 #include "lander.h"
-#include "stdio.h"
+#include <stdio.h>
 
-#define THRUST_SCALER 0.3
+#define THRUST_SCALER 0.15
+#define gravity 0.025
 
 int16_t x0 = 320;
 int16_t y_point0 = 0;
@@ -16,7 +17,6 @@ int16_t x3 = 320;
 int16_t y3 = 10;
 int16_t x_origin = 0;
 int16_t y_origin = 120;
-#define gravity 0.05
 double y_velocity = 0.9;
 double x_velocity = -1;
 bool tick_is_odd = true;
@@ -27,6 +27,8 @@ double thrust_x = 0.;
 double thrust_y = 0.;
 
 struct lander_t the_lander;
+ 
+//TODO:: change the 
 
 void map1() {
   display_drawLine(0, 240, 100, 200, DISPLAY_WHITE);
@@ -44,7 +46,7 @@ void gameControl_init() {
 
   display_fillScreen(DISPLAY_BLACK);
   buttons_init();
-  display_drawLine(x0, y_point0, x1, y_point1, DISPLAY_CYAN);
+  display_drawLine(x0, y_point0, x1, y_point1, DISPLAY_GREEN);
   display_drawLine(x1, y_point1, x2, y2, DISPLAY_CYAN);
   display_drawLine(x2, y2, x3, y3, DISPLAY_CYAN);
   display_drawLine(x3, y3, x0, y_point0, DISPLAY_CYAN);
@@ -65,6 +67,7 @@ void gameControl_tick() {
   // printf("vertical thrust: %f\n",get_thrust_y(&the_lander));
   // printf("horizontal thrust: %f\n\n",get_thrust_x(&the_lander));
   printf("vertical velocity: %f\n", y_velocity);
+  printf("Theta: %f\n", the_lander.angle);
   printf("horizontal velocity: %f\n\n", x_velocity);
 
   if ((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) {
@@ -77,11 +80,36 @@ void gameControl_tick() {
 
   // testing rotations given preset rotation values
   if (y_point0 <= 230) {
+
+    //erasing the box
     display_drawLine(x0, y_point0, x1, y_point1, DISPLAY_BLACK);
     display_drawLine(x1, y_point1, x2, y2, DISPLAY_BLACK);
     display_drawLine(x2, y2, x3, y3, DISPLAY_BLACK);
     display_drawLine(x3, y3, x0, y_point0, DISPLAY_BLACK);
     display_drawPixel(x0, y_point0, DISPLAY_BLACK);
+
+    //Testing the idea of incrementing every other tick to solve the  stand still issue
+    if (tick_is_odd && (y_velocity < 1) && (y_velocity > 0)){ // if tick_is_odd and the velocity falls in the correct range, then add to y_velocity
+    y_point0 = y_point0 + 1;
+    y_point1 = y_point1 + 1;
+    y2 = y2 + 1;
+    y3 = y3 + 1;
+    x0 = x0 + (int)x_velocity;
+    x1 = x1 + (int)x_velocity;
+    x2 = x2 + (int)x_velocity;
+    x3 = x3 + (int)x_velocity;
+    
+    } else if (tick_is_odd && (y_velocity > -1) && (y_velocity < 0)){
+    y_point0 = y_point0 - 1;
+    y_point1 = y_point1 - 1;
+    y2 = y2 - 1;
+    y3 = y3 - 1;
+    x0 = x0 + (int)x_velocity;
+    x1 = x1 + (int)x_velocity;
+    x2 = x2 + (int)x_velocity;
+    x3 = x3 + (int)x_velocity;
+    
+    }else{
     y_point0 = y_point0 + (int)y_velocity;
     y_point1 = y_point1 + (int)y_velocity;
     y2 = y2 + (int)y_velocity;
@@ -90,6 +118,7 @@ void gameControl_tick() {
     x1 = x1 + (int)x_velocity;
     x2 = x2 + (int)x_velocity;
     x3 = x3 + (int)x_velocity;
+    }
 
     // if statements to turn left
     if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
@@ -284,7 +313,7 @@ void gameControl_tick() {
       x2 = x2 - 320;
       x3 = x3 - 320;
     }
-    display_drawLine(x0, y_point0, x1, y_point1, DISPLAY_CYAN);
+    display_drawLine(x0, y_point0, x1, y_point1, DISPLAY_RED);
     display_drawLine(x1, y_point1, x2, y2, DISPLAY_CYAN);
     display_drawLine(x2, y2, x3, y3, DISPLAY_CYAN);
     display_drawLine(x3, y3, x0, y_point0, DISPLAY_CYAN);

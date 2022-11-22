@@ -1,5 +1,6 @@
 #include "lander.h"
 
+//TODO:: there is a bug where if theta is 90 degrees it still changes the x_velocity when it should be zero at that angle
 static double cos_degrees(double theta) {
 
   // convert radians to degrees
