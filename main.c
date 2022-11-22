@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#define TICK_PERIOD 80E-3
+#define TICK_PERIOD 60E-3
 
 // game isr that calls lunar_control_tick every 50ms.
 // TODO: We might need to go faster, we should see how fast the game plays this
