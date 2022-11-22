@@ -7,13 +7,13 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-typedef struct {
+struct lander_t {
   double angle;
   display_point_t location;
   int32_t vertical_velocity;
   int32_t horizontal_velocity;
   bool has_landed;
-} lander_t;
+};
 
 void lander_init(struct lander_t *lander);
 

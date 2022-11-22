@@ -6,19 +6,19 @@
 
 #define THRUST_SCALER 0.3
 
-int16_t x0 = -10;
+int16_t x0 = 320;
 int16_t y_point0 = 0;
-int16_t x1 = 0;
+int16_t x1 = 330;
 int16_t y_point1 = 0;
-int16_t x2 = 0;
+int16_t x2 = 330;
 int16_t y2 = 10;
-int16_t x3 = -10;
+int16_t x3 = 320;
 int16_t y3 = 10;
 int16_t x_origin = 0;
 int16_t y_origin = 120;
 #define gravity 0.05
 double y_velocity = 0.9;
-double x_velocity = 1;
+double x_velocity = -1;
 bool tick_is_odd = true;
 int8_t tick_fourth = 0;
 int8_t rotate = 0;
@@ -86,195 +86,204 @@ void gameControl_tick() {
     y_point1 = y_point1 + (int)y_velocity;
     y2 = y2 + (int)y_velocity;
     y3 = y3 + (int)y_velocity;
-    x0 = x0 + x_velocity;
-    x1 = x1 + x_velocity;
-    x2 = x2 + x_velocity;
-    x3 = x3 + x_velocity;
-    if (tick_fourth == 1) {
-      tick_fourth = 0;
-      // if statements to turn left
-      if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
-          (rotate == 0)) {
-        x0 = x0 + 3;
-        y_point0 = y_point0 - 1;
-        x1 = x1 + 1;
-        y_point1 = y_point1 + 3;
-        x2 = x2 - 3;
-        y2 = y2 + 1;
-        x3 = x3 - 1;
-        y3 = y3 - 3;
-        rotate++;
-      } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
-                 (rotate == 1)) {
-        x0 = x0 + 2;
-        y_point0 = y_point0 - 1;
-        x1 = x1 + 1;
-        y_point1 = y_point1 + 2;
-        x2 = x2 - 2;
-        y2 = y2 + 1;
-        x3 = x3 - 1;
-        y3 = y3 - 2;
-        rotate++;
-      } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
-                 (rotate == 2)) {
-        x0 = x0 + 2;
-        y_point0 = y_point0 + 1;
-        x1 = x1 - 1;
-        y_point1 = y_point1 + 2;
-        x2 = x2 - 2;
-        y2 = y2 - 1;
-        x3 = x3 + 1;
-        y3 = y3 - 2;
-        rotate++;
-      } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
-                 (rotate == 3)) {
-        x0 = x0 + 3;
-        y_point0 = y_point0 + 1;
-        x1 = x1 - 1;
-        y_point1 = y_point1 + 3;
-        x2 = x2 - 3;
-        y2 = y2 - 1;
-        x3 = x3 + 1;
-        y3 = y3 - 3;
-        rotate++;
-      } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
-                 (rotate == -1)) {
-        x0 = x0 + 1;
-        y_point0 = y_point0 - 3;
-        x1 = x1 + 3;
-        y_point1 = y_point1 + 1;
-        x2 = x2 - 1;
-        y2 = y2 + 3;
-        x3 = x3 - 3;
-        y3 = y3 - 1;
-        rotate++;
-      } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
-                 (rotate == -2)) {
-        x0 = x0 + 1;
-        y_point0 = y_point0 - 2;
-        x1 = x1 + 2;
-        y_point1 = y_point1 + 1;
-        x2 = x2 - 1;
-        y2 = y2 + 2;
-        x3 = x3 - 2;
-        y3 = y3 - 1;
-        rotate++;
-      } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
-                 (rotate == -3)) {
-        x0 = x0 - 1;
-        y_point0 = y_point0 - 2;
-        x1 = x1 + 2;
-        y_point1 = y_point1 - 1;
-        x2 = x2 + 1;
-        y2 = y2 + 2;
-        x3 = x3 - 2;
-        y3 = y3 + 1;
-        rotate++;
-      } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
-                 (rotate == -4)) {
-        x0 = x0 - 1;
-        y_point0 = y_point0 - 3;
-        x1 = x1 + 3;
-        y_point1 = y_point1 - 1;
-        x2 = x2 + 1;
-        y2 = y2 + 3;
-        x3 = x3 - 3;
-        y3 = y3 + 1;
-        rotate++;
-      }
+    x0 = x0 + (int)x_velocity;
+    x1 = x1 + (int)x_velocity;
+    x2 = x2 + (int)x_velocity;
+    x3 = x3 + (int)x_velocity;
 
-      // turn right calculations:
-      else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
+    // if statements to turn left
+    if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
+        (rotate == 0)) {
+      x0 = x0 + 3;
+      y_point0 = y_point0 - 1;
+      x1 = x1 + 1;
+      y_point1 = y_point1 + 3;
+      x2 = x2 - 3;
+      y2 = y2 + 1;
+      x3 = x3 - 1;
+      y3 = y3 - 3;
+      rotate++;
+    } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
                (rotate == 1)) {
-        x0 = x0 - 3;
-        y_point0 = y_point0 + 1;
-        x1 = x1 - 1;
-        y_point1 = y_point1 - 3;
-        x2 = x2 + 3;
-        y2 = y2 - 1;
-        x3 = x3 + 1;
-        y3 = y3 + 3;
-        rotate--;
-      } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
-                 (rotate == 2)) {
-        x0 = x0 - 2;
-        y_point0 = y_point0 + 1;
-        x1 = x1 - 1;
-        y_point1 = y_point1 - 2;
-        x2 = x2 + 2;
-        y2 = y2 - 1;
-        x3 = x3 + 1;
-        y3 = y3 + 2;
-        rotate--;
-      } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
-                 (rotate == 3)) {
-        x0 = x0 - 2;
-        y_point0 = y_point0 - 1;
-        x1 = x1 + 1;
-        y_point1 = y_point1 - 2;
-        x2 = x2 + 2;
-        y2 = y2 + 1;
-        x3 = x3 - 1;
-        y3 = y3 + 2;
-        rotate--;
-      } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
-                 (rotate == 4)) {
-        x0 = x0 - 3;
-        y_point0 = y_point0 - 1;
-        x1 = x1 + 1;
-        y_point1 = y_point1 - 3;
-        x2 = x2 + 3;
-        y2 = y2 + 1;
-        x3 = x3 - 1;
-        y3 = y3 + 3;
-        rotate--;
-      } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
-                 (rotate == 0)) {
-        x0 = x0 - 1;
-        y_point0 = y_point0 + 3;
-        x1 = x1 - 3;
-        y_point1 = y_point1 - 1;
-        x2 = x2 + 1;
-        y2 = y2 - 3;
-        x3 = x3 + 3;
-        y3 = y3 + 1;
-        rotate--;
-      } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
-                 (rotate == -1)) {
-        x0 = x0 - 1;
-        y_point0 = y_point0 + 2;
-        x1 = x1 - 2;
-        y_point1 = y_point1 - 1;
-        x2 = x2 + 1;
-        y2 = y2 - 2;
-        x3 = x3 + 2;
-        y3 = y3 + 1;
-        rotate--;
-      } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
-                 (rotate == -2)) {
-        x0 = x0 + 1;
-        y_point0 = y_point0 + 2;
-        x1 = x1 - 2;
-        y_point1 = y_point1 + 1;
-        x2 = x2 - 1;
-        y2 = y2 - 2;
-        x3 = x3 + 2;
-        y3 = y3 - 1;
-        rotate--;
-      } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
-                 (rotate == -3)) {
-        x0 = x0 + 1;
-        y_point0 = y_point0 + 3;
-        x1 = x1 - 3;
-        y_point1 = y_point1 + 1;
-        x2 = x2 - 1;
-        y2 = y2 - 3;
-        x3 = x3 + 3;
-        y3 = y3 - 1;
-        rotate--;
-      }
+      x0 = x0 + 2;
+      y_point0 = y_point0 - 1;
+      x1 = x1 + 1;
+      y_point1 = y_point1 + 2;
+      x2 = x2 - 2;
+      y2 = y2 + 1;
+      x3 = x3 - 1;
+      y3 = y3 - 2;
+      rotate++;
+    } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
+               (rotate == 2)) {
+      x0 = x0 + 2;
+      y_point0 = y_point0 + 1;
+      x1 = x1 - 1;
+      y_point1 = y_point1 + 2;
+      x2 = x2 - 2;
+      y2 = y2 - 1;
+      x3 = x3 + 1;
+      y3 = y3 - 2;
+      rotate++;
+    } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
+               (rotate == 3)) {
+      x0 = x0 + 3;
+      y_point0 = y_point0 + 1;
+      x1 = x1 - 1;
+      y_point1 = y_point1 + 3;
+      x2 = x2 - 3;
+      y2 = y2 - 1;
+      x3 = x3 + 1;
+      y3 = y3 - 3;
+      rotate++;
+    } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
+               (rotate == -1)) {
+      x0 = x0 + 1;
+      y_point0 = y_point0 - 3;
+      x1 = x1 + 3;
+      y_point1 = y_point1 + 1;
+      x2 = x2 - 1;
+      y2 = y2 + 3;
+      x3 = x3 - 3;
+      y3 = y3 - 1;
+      rotate++;
+    } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
+               (rotate == -2)) {
+      x0 = x0 + 1;
+      y_point0 = y_point0 - 2;
+      x1 = x1 + 2;
+      y_point1 = y_point1 + 1;
+      x2 = x2 - 1;
+      y2 = y2 + 2;
+      x3 = x3 - 2;
+      y3 = y3 - 1;
+      rotate++;
+    } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
+               (rotate == -3)) {
+      x0 = x0 - 1;
+      y_point0 = y_point0 - 2;
+      x1 = x1 + 2;
+      y_point1 = y_point1 - 1;
+      x2 = x2 + 1;
+      y2 = y2 + 2;
+      x3 = x3 - 2;
+      y3 = y3 + 1;
+      rotate++;
+    } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
+               (rotate == -4)) {
+      x0 = x0 - 1;
+      y_point0 = y_point0 - 3;
+      x1 = x1 + 3;
+      y_point1 = y_point1 - 1;
+      x2 = x2 + 1;
+      y2 = y2 + 3;
+      x3 = x3 - 3;
+      y3 = y3 + 1;
+      rotate++;
     }
 
+    // turn right calculations:
+    else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
+             (rotate == 1)) {
+      x0 = x0 - 3;
+      y_point0 = y_point0 + 1;
+      x1 = x1 - 1;
+      y_point1 = y_point1 - 3;
+      x2 = x2 + 3;
+      y2 = y2 - 1;
+      x3 = x3 + 1;
+      y3 = y3 + 3;
+      rotate--;
+    } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
+               (rotate == 2)) {
+      x0 = x0 - 2;
+      y_point0 = y_point0 + 1;
+      x1 = x1 - 1;
+      y_point1 = y_point1 - 2;
+      x2 = x2 + 2;
+      y2 = y2 - 1;
+      x3 = x3 + 1;
+      y3 = y3 + 2;
+      rotate--;
+    } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
+               (rotate == 3)) {
+      x0 = x0 - 2;
+      y_point0 = y_point0 - 1;
+      x1 = x1 + 1;
+      y_point1 = y_point1 - 2;
+      x2 = x2 + 2;
+      y2 = y2 + 1;
+      x3 = x3 - 1;
+      y3 = y3 + 2;
+      rotate--;
+    } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
+               (rotate == 4)) {
+      x0 = x0 - 3;
+      y_point0 = y_point0 - 1;
+      x1 = x1 + 1;
+      y_point1 = y_point1 - 3;
+      x2 = x2 + 3;
+      y2 = y2 + 1;
+      x3 = x3 - 1;
+      y3 = y3 + 3;
+      rotate--;
+    } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
+               (rotate == 0)) {
+      x0 = x0 - 1;
+      y_point0 = y_point0 + 3;
+      x1 = x1 - 3;
+      y_point1 = y_point1 - 1;
+      x2 = x2 + 1;
+      y2 = y2 - 3;
+      x3 = x3 + 3;
+      y3 = y3 + 1;
+      rotate--;
+    } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
+               (rotate == -1)) {
+      x0 = x0 - 1;
+      y_point0 = y_point0 + 2;
+      x1 = x1 - 2;
+      y_point1 = y_point1 - 1;
+      x2 = x2 + 1;
+      y2 = y2 - 2;
+      x3 = x3 + 2;
+      y3 = y3 + 1;
+      rotate--;
+    } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
+               (rotate == -2)) {
+      x0 = x0 + 1;
+      y_point0 = y_point0 + 2;
+      x1 = x1 - 2;
+      y_point1 = y_point1 + 1;
+      x2 = x2 - 1;
+      y2 = y2 - 2;
+      x3 = x3 + 2;
+      y3 = y3 - 1;
+      rotate--;
+    } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
+               (rotate == -3)) {
+      x0 = x0 + 1;
+      y_point0 = y_point0 + 3;
+      x1 = x1 - 3;
+      y_point1 = y_point1 + 1;
+      x2 = x2 - 1;
+      y2 = y2 - 3;
+      x3 = x3 + 3;
+      y3 = y3 - 1;
+      rotate--;
+    }
+
+    if ((x0 <= -10) || (x3 <= -10)) {
+      x0 = x0 + 320;
+      x1 = x1 + 320;
+      x2 = x2 + 320;
+      x3 = x3 + 320;
+    } else if ((x1 >= 330) || (x2 >= 330)) {
+      x0 = x0 - 320;
+      x1 = x1 - 320;
+      x2 = x2 - 320;
+      x3 = x3 - 320;
+    }
     display_drawLine(x0, y_point0, x1, y_point1, DISPLAY_CYAN);
     display_drawLine(x1, y_point1, x2, y2, DISPLAY_CYAN);
     display_drawLine(x2, y2, x3, y3, DISPLAY_CYAN);
@@ -282,10 +291,11 @@ void gameControl_tick() {
     display_drawPixel(x0, y_point0, DISPLAY_YELLOW);
     y_velocity = y_velocity + gravity - (THRUST_SCALER * thrust_y);
     x_velocity = x_velocity + (THRUST_SCALER * thrust_x);
+    map1();
   }
 
   // change thrust value if button 1 is being pressed
-  if ((button_value & BUTTONS_BTN1_MASK) == BUTTONS_BTN1_MASK) {
+  if (((button_value & BUTTONS_BTN1_MASK) == BUTTONS_BTN1_MASK)) {
     thrust_x = get_thrust_x(&the_lander);
     thrust_y = get_thrust_y(&the_lander);
   } else {
@@ -293,5 +303,4 @@ void gameControl_tick() {
     thrust_y = 0;
   }
   tick_is_odd = !tick_is_odd;
-  tick_fourth++;
 }
