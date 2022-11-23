@@ -2,6 +2,7 @@
 #include "buttons.h"
 #include "display.h"
 #include "lander.h"
+#include "maps.h"
 #include "stdio.h"
 
 #define THRUST_SCALER 0.3
@@ -27,14 +28,6 @@ double thrust_x = 0.;
 double thrust_y = 0.;
 
 struct lander_t the_lander;
-
-void map1() {
-  display_drawLine(0, 240, 100, 200, DISPLAY_WHITE);
-  display_drawLine(100, 200, 160, 220, DISPLAY_WHITE);
-  display_drawLine(160, 220, 190, 220, DISPLAY_DARK_YELLOW);
-  display_drawLine(190, 220, 300, 160, DISPLAY_WHITE);
-  display_drawLine(300, 160, 320, 240, DISPLAY_WHITE);
-}
 
 // Initialize the game control logic
 // This function will initialize the lander and the map.
