@@ -88,6 +88,9 @@ void gameControl_tick() {
     display_drawLine(x3, y3, x0, y_point0, DISPLAY_BLACK);
     display_drawPixel(x0, y_point0, DISPLAY_BLACK);
 
+
+    //
+
     //Testing the idea of incrementing every other tick to solve the  stand still issue
     if (tick_is_odd && (y_velocity < 1) && (y_velocity > 0)){ // if tick_is_odd and the velocity falls in the correct range, then add to y_velocity
     y_point0 = y_point0 + 1;
