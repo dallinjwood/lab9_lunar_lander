@@ -34,22 +34,30 @@ bool map1_collide(double x0, double x1, double x2, double x3, double y0,
         (y2 >= 240.00 - (0.188679 * x2)) || (y3 >= 240.00 - (0.188679 * x3))) {
       win = false;
       return true;
+    } else {
+      return false;
     }
   } else if (((x0 <= 106) || (x3 <= 106)) && ((x1 >= 106) || (x2 >= 106))) {
     if ((y0 >= 240.00 - (0.4 * x0)) || (y1 >= 220) || (y2 >= 220) ||
         (y3 >= 240.00 - (0.4 * x3))) {
       win = false;
       return true;
+    } else {
+      return false;
     }
   } else if (((x0 > 106) || (x3 > 106)) && ((x1 <= 133) || (x2 <= 133))) {
     if ((y0 >= 220) || (y1 >= 220) || (y2 >= 220) || (y3 >= 220)) {
       win = false;
       return true;
+    } else {
+      return false;
     }
   } else if (((x0 <= 133) || (x3 <= 133)) && ((x1 >= 133) || (x2 >= 133))) {
     if ((y0 >= 220) || (y1 >= 220) || (y2 >= 220) || (y3 >= 220)) {
       win = false;
       return true;
+    } else {
+      return false;
     }
   } else if (((x0 >= 133) || (x3 >= 133)) && ((x1 <= 187) || (x2 <= 187))) {
     if ((y0 >= 220) || (y1 >= 220) || (y2 >= 220) || (y3 >= 220)) {
@@ -60,22 +68,30 @@ bool map1_collide(double x0, double x1, double x2, double x3, double y0,
         win = false;
         return true;
       }
+    } else {
+      return false;
     }
   } else if (((x0 <= 187) || (x3 <= 187)) && ((x1 >= 187) || (x2 >= 187))) {
     if ((y0 >= 220) || (y1 >= 220) || (y2 >= 220) || (y3 >= 220)) {
       win = false;
       return true;
+    } else {
+      return false;
     }
   } else if (((x0 >= 187) || (x3 >= 187)) && ((x1 <= 214) || (x2 <= 214))) {
     if ((y0 >= 220) || (y1 >= 220) || (y2 >= 220) || (y3 >= 220)) {
       win = false;
       return true;
+    } else {
+      return false;
     }
   } else if (((x0 <= 214) || (x3 <= 214)) && ((x1 >= 214) || (x2 >= 214))) {
     if ((y0 >= 220) || (y1 >= (0.188679 * x1) + 179.623) ||
         (y2 >= (0.188679 * x2) + 179.623) || (y3 >= 220)) {
       win = false;
       return true;
+    } else {
+      return false;
     }
   } else if (((x0 >= 214) || (x3 >= 214))) {
     if ((y0 >= (0.188679 * x0) + 179.623) ||
@@ -84,6 +100,8 @@ bool map1_collide(double x0, double x1, double x2, double x3, double y0,
         (y3 >= (0.188679 * x3) + 179.623)) {
       win = false;
       return true;
+    } else {
+      return false;
     }
   } else {
     return false;
