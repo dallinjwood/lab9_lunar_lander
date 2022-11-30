@@ -4,9 +4,14 @@
 static double cos_degrees(double theta) {
 
   // convert radians to degrees
+
   theta = theta * (3.14 / 180);
   // printf("cos_degrees %f\n", cos(theta));
+  if(theta == 90){
+    return 0;
+  } else {
   return cos(theta);
+  }
 }
 
 static double sin_degrees(double theta) {
@@ -40,14 +45,14 @@ double get_thrust_x(struct lander_t *lander) {
 // incrimient the angle
 void lean_left(struct lander_t *lander) {
   if (lander->angle < 180) {
-    lander->angle += 10;
+    lander->angle += 20;
   }
 }
 
 // decrement the angle
 void lean_right(struct lander_t *lander) {
   if (lander->angle > 0) {
-    lander->angle -= 10;
+    lander->angle -= 20;
   }
 }
 

@@ -140,6 +140,40 @@ void gameControl_tick() {
         x3 = x3 + (int)x_velocity;
       }
 
+      //incrementing by 0.5 for  the x_velcoty
+      if (tick_is_odd && (x_velocity < 1) &&
+          (x_velocity > 0.2)) { // if tick_is_odd and the velocity falls in the
+                                // correct range, then add to y_velocity
+        y_point0 = y_point0 + (int)y_velocity;
+        y_point1 = y_point1 + (int)y_velocity;
+        y2 = y2 + (int)y_velocity;
+        y3 = y3 + (int)y_velocity;
+        x0 = x0 + 1;
+        x1 = x1 + 1;
+        x2 = x2 + 1;
+        x3 = x3 + 1;
+
+      } else if (tick_is_odd && (x_velocity > -1) && (x_velocity < -0.2)) {
+        y_point0 = y_point0 + (int)y_velocity;
+        y_point1 = y_point1 + (int)y_velocity;
+        y2 = y2 + (int)y_velocity;
+        y3 = y3 + (int)y_velocity;
+        x0 = x0 - 1;
+        x1 = x1 - 1;
+        x2 = x2 - 1;
+        x3 = x3 - 1;
+
+      } else {
+        y_point0 = y_point0 + (int)y_velocity;
+        y_point1 = y_point1 + (int)y_velocity;
+        y2 = y2 + (int)y_velocity;
+        y3 = y3 + (int)y_velocity;
+        x0 = x0 + (int)x_velocity;
+        x1 = x1 + (int)x_velocity;
+        x2 = x2 + (int)x_velocity;
+        x3 = x3 + (int)x_velocity;
+      }
+
       // if statements to turn left
       if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
           (rotate == 0)) {
@@ -322,6 +356,8 @@ void gameControl_tick() {
         rotate--;
       }
 
+
+      //infinite screen code
       if ((x0 <= -10) || (x3 <= -10)) {
         x0 = x0 + 320;
         x1 = x1 + 320;
