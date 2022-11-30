@@ -108,8 +108,8 @@ void gameControl_tick() {
       // Testing the idea of incrementing every other tick to solve the  stand
       // still issue
       if (tick_is_odd && (y_velocity < 1) &&
-          (y_velocity > 0)) { // if tick_is_odd and the velocity falls in the
-                              // correct range, then add to y_velocity
+          (y_velocity > 0.2)) { // if tick_is_odd and the velocity falls in the
+                                // correct range, then add to y_velocity
         y_point0 = y_point0 + 1;
         y_point1 = y_point1 + 1;
         y2 = y2 + 1;
@@ -119,7 +119,7 @@ void gameControl_tick() {
         x2 = x2 + (int)x_velocity;
         x3 = x3 + (int)x_velocity;
 
-      } else if (tick_is_odd && (y_velocity > -1) && (y_velocity < 0)) {
+      } else if (tick_is_odd && (y_velocity > -1) && (y_velocity < -0.2)) {
         y_point0 = y_point0 - 1;
         y_point1 = y_point1 - 1;
         y2 = y2 - 1;
