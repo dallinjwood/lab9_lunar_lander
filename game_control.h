@@ -5,7 +5,7 @@
 
 // Initialize the game control logic
 // This function will initialize all missiles, stats, plane, etc.
-void gameControl_init();
+void gameControl_init(double period_s);
 
 // Tick the game control logic
 //

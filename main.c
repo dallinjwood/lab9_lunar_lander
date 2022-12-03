@@ -31,7 +31,7 @@ int main() {
   printf("The Tangent of %f is %f\n", value, result);
 
   display_init();
-  gameControl_init();
+  gameControl_init(TICK_PERIOD);
 
   // Initialize timer interrupts
   interrupts_init();

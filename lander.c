@@ -1,5 +1,8 @@
 #include "lander.h"
 
+//TODO:: #define for init values
+//TODO:: #define for angel ranges?
+
 //TODO:: there is a bug where if theta is 90 degrees it still changes the x_velocity when it should be zero at that angle
 static double cos_degrees(double theta) {
 
@@ -61,4 +64,23 @@ void thrust(struct lander_t *lander);
 // draw the lander at the current angle
 void draw_lander(struct lander_t *lander) {}
 
+void draw_lander_pos1(struct lander_t *lander) {}
+
+void draw_lander_pos1(struct lander_t *lander) {}
+
+void draw_lander_pos1(struct lander_t *lander) {}
+
+void draw_lander_pos1(struct lander_t *lander) {}
+
+void draw_lander_pos1(struct lander_t *lander) {}
+
+void draw_lander_pos1(struct lander_t *lander) {}
+
+void draw_lander_pos1(struct lander_t *lander) {}
+
+void draw_lander_pos1(struct lander_t *lander) {}
+
+void draw_lander_pos1(struct lander_t *lander) {}
+
+//TODO:: do we need this?
 display_point_t get_location();
