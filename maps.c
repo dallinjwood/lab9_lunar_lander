@@ -38,8 +38,8 @@ bool map1_collide(double x0, double x1, double x2, double x3, double y0,
       return false;
     }
   } else if (((x0 <= 106) || (x3 <= 106)) && ((x1 >= 106) || (x2 >= 106))) {
-    if ((y0 >= 240.00 - (0.4 * x0)) || (y1 >= 220) || (y2 >= 220) ||
-        (y3 >= 240.00 - (0.4 * x3))) {
+    if ((y0 >= 240.00 - (0.188679 * x0)) || (y1 >= 220) || (y2 >= 220) ||
+        (y3 >= 240.00 - (0.188679 * x3))) {
       win = false;
       return true;
     } else {
