@@ -6,7 +6,7 @@
 #include <stdio.h>
 
 #define THRUST_SCALER 0.15
-#define gravity 0.025
+#define gravity 0.02
 
 double x0 = 320;
 double y_point0 = 0;
@@ -20,6 +20,7 @@ int16_t level = 1;
 double y_velocity = 0.9;
 double x_velocity = -1;
 bool tick_is_odd = true;
+uint64_t third_tick = 0;
 int8_t tick_fourth = 0;
 int8_t rotate = 0;
 
@@ -69,6 +70,8 @@ void gameControl_tick() {
   //   velocity = velocity + gravity;
   // }
 
+  //set
+
   if (level == 1) {
     map1();
   } else if ((level == 2)) {
@@ -88,10 +91,10 @@ void gameControl_tick() {
   printf("NOT DEAD\n");
 
   if ((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) {
-    lean_right(&the_lander);
+    // lean_right(&the_lander);
     // printf("%d\n",the_lander.angle);
   } else if ((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) {
-    lean_left(&the_lander);
+    // lean_left(&the_lander);
     // printf("%d\n",the_lander.angle);
   }
 
@@ -107,8 +110,8 @@ void gameControl_tick() {
 
       // Testing the idea of incrementing every other tick to solve the  stand
       // still issue
-      if (tick_is_odd && (y_velocity < 1) &&
-          (y_velocity > 0.2)) { // if tick_is_odd and the velocity falls in the
+      if ((third_tick % 4 < 1) && (y_velocity < 0.35) &&
+          (y_velocity > 0.1)) { // if tick_is_odd and the velocity falls in the
                                 // correct range, then add to y_velocity
         y_point0 = y_point0 + 1;
         y_point1 = y_point1 + 1;
@@ -119,7 +122,53 @@ void gameControl_tick() {
         x2 = x2 + (int)x_velocity;
         x3 = x3 + (int)x_velocity;
 
-      } else if (tick_is_odd && (y_velocity > -1) && (y_velocity < -0.2)) {
+      } else if ((third_tick % 4 < 2) && (y_velocity < 0.7) &&
+          (y_velocity > 0.351)) {
+        y_point0 = y_point0 + 1;
+        y_point1 = y_point1 + 1;
+        y2 = y2 + 1;
+        y3 = y3 + 1;
+        x0 = x0 + (int)x_velocity;
+        x1 = x1 + (int)x_velocity;
+        x2 = x2 + (int)x_velocity;
+        x3 = x3 + (int)x_velocity;
+
+      } else if ((third_tick % 4 < 3) && (y_velocity < 1) &&
+          (y_velocity > 0.71)) {
+        y_point0 = y_point0 + 1;
+        y_point1 = y_point1 + 1;
+        y2 = y2 + 1;
+        y3 = y3 + 1;
+        x0 = x0 + (int)x_velocity;
+        x1 = x1 + (int)x_velocity;
+        x2 = x2 + (int)x_velocity;
+        x3 = x3 + (int)x_velocity;
+
+      } else if ((third_tick % 4 < 1) && (y_velocity > -0.35) &&
+          (y_velocity < -0.1)) { // if tick_is_odd and the velocity falls in the
+                                // correct range, then add to y_velocity
+        y_point0 = y_point0 - 1;
+        y_point1 = y_point1 - 1;
+        y2 = y2 - 1;
+        y3 = y3 - 1;
+        x0 = x0 + (int)x_velocity;
+        x1 = x1 + (int)x_velocity;
+        x2 = x2 + (int)x_velocity;
+        x3 = x3 + (int)x_velocity;
+
+      } else if ((third_tick % 4 < 2) && (y_velocity > -0.7) &&
+          (y_velocity < -0.351)) {
+        y_point0 = y_point0 - 1;
+        y_point1 = y_point1 - 1;
+        y2 = y2 - 1;
+        y3 = y3 - 1;
+        x0 = x0 + (int)x_velocity;
+        x1 = x1 + (int)x_velocity;
+        x2 = x2 + (int)x_velocity;
+        x3 = x3 + (int)x_velocity;
+
+      } else if ((third_tick % 4 < 3) && (y_velocity > -1) &&
+          (y_velocity < -0.71)) {
         y_point0 = y_point0 - 1;
         y_point1 = y_point1 - 1;
         y2 = y2 - 1;
@@ -176,7 +225,7 @@ void gameControl_tick() {
 
       // if statements to turn left
       if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
-          (rotate == 0)) {
+          ((the_lander.angle >= 80) && (the_lander.angle <= 100))) {
         x0 = x0 + 3;
         y_point0 = y_point0 - 1;
         x1 = x1 + 1;
@@ -185,9 +234,10 @@ void gameControl_tick() {
         y2 = y2 + 1;
         x3 = x3 - 1;
         y3 = y3 - 3;
-        rotate++;
+        // rotate++;
+        lean_right(&the_lander);
       } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
-                 (rotate == 1)) {
+                 ((the_lander.angle >= 60) && (the_lander.angle < 80))) {
         x0 = x0 + 2;
         y_point0 = y_point0 - 1;
         x1 = x1 + 1;
@@ -196,9 +246,10 @@ void gameControl_tick() {
         y2 = y2 + 1;
         x3 = x3 - 1;
         y3 = y3 - 2;
-        rotate++;
+        // rotate++;
+        lean_right(&the_lander);
       } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
-                 (rotate == 2)) {
+                 ((the_lander.angle >= 40) && (the_lander.angle < 60))) {
         x0 = x0 + 2;
         y_point0 = y_point0 + 1;
         x1 = x1 - 1;
@@ -207,9 +258,10 @@ void gameControl_tick() {
         y2 = y2 - 1;
         x3 = x3 + 1;
         y3 = y3 - 2;
-        rotate++;
+        // rotate++;
+        lean_right(&the_lander);
       } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
-                 (rotate == 3)) {
+                 ((the_lander.angle >= 20) && (the_lander.angle < 40))) {
         x0 = x0 + 3;
         y_point0 = y_point0 + 1;
         x1 = x1 - 1;
@@ -218,9 +270,10 @@ void gameControl_tick() {
         y2 = y2 - 1;
         x3 = x3 + 1;
         y3 = y3 - 3;
-        rotate++;
+        // rotate++;
+        lean_right(&the_lander);
       } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
-                 (rotate == -1)) {
+                 ((the_lander.angle >= 100) && (the_lander.angle < 120))) {
         x0 = x0 + 1;
         y_point0 = y_point0 - 3;
         x1 = x1 + 3;
@@ -229,9 +282,10 @@ void gameControl_tick() {
         y2 = y2 + 3;
         x3 = x3 - 3;
         y3 = y3 - 1;
-        rotate++;
+        // rotate++;
+        lean_right(&the_lander);
       } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
-                 (rotate == -2)) {
+                 ((the_lander.angle >= 120) && (the_lander.angle < 140))) {
         x0 = x0 + 1;
         y_point0 = y_point0 - 2;
         x1 = x1 + 2;
@@ -240,9 +294,10 @@ void gameControl_tick() {
         y2 = y2 + 2;
         x3 = x3 - 2;
         y3 = y3 - 1;
-        rotate++;
+        // rotate++;
+        lean_right(&the_lander);
       } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
-                 (rotate == -3)) {
+                 ((the_lander.angle >= 140) && (the_lander.angle < 160))) {
         x0 = x0 - 1;
         y_point0 = y_point0 - 2;
         x1 = x1 + 2;
@@ -251,9 +306,10 @@ void gameControl_tick() {
         y2 = y2 + 2;
         x3 = x3 - 2;
         y3 = y3 + 1;
-        rotate++;
+        // rotate++;
+        lean_right(&the_lander);
       } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
-                 (rotate == -4)) {
+                 ((the_lander.angle >= 160) && (the_lander.angle < 180))) {
         x0 = x0 - 1;
         y_point0 = y_point0 - 3;
         x1 = x1 + 3;
@@ -262,12 +318,13 @@ void gameControl_tick() {
         y2 = y2 + 3;
         x3 = x3 - 3;
         y3 = y3 + 1;
-        rotate++;
+        // rotate++;
+        lean_right(&the_lander);
       }
 
       // turn right calculations:
       else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
-               (rotate == 1)) {
+               ((the_lander.angle >= 60) && (the_lander.angle < 80))) {
         x0 = x0 - 3;
         y_point0 = y_point0 + 1;
         x1 = x1 - 1;
@@ -276,9 +333,10 @@ void gameControl_tick() {
         y2 = y2 - 1;
         x3 = x3 + 1;
         y3 = y3 + 3;
-        rotate--;
+        // rotate--;
+        lean_left(&the_lander);
       } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
-                 (rotate == 2)) {
+                 ((the_lander.angle >= 40) && (the_lander.angle < 60))) {
         x0 = x0 - 2;
         y_point0 = y_point0 + 1;
         x1 = x1 - 1;
@@ -287,9 +345,10 @@ void gameControl_tick() {
         y2 = y2 - 1;
         x3 = x3 + 1;
         y3 = y3 + 2;
-        rotate--;
+        // rotate--;
+        lean_left(&the_lander);
       } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
-                 (rotate == 3)) {
+                 ((the_lander.angle >= 20) && (the_lander.angle < 40))) {
         x0 = x0 - 2;
         y_point0 = y_point0 - 1;
         x1 = x1 + 1;
@@ -298,9 +357,10 @@ void gameControl_tick() {
         y2 = y2 + 1;
         x3 = x3 - 1;
         y3 = y3 + 2;
-        rotate--;
+        // rotate--;
+        lean_left(&the_lander);
       } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
-                 (rotate == 4)) {
+                 ((the_lander.angle >= 0) && (the_lander.angle < 20))) {
         x0 = x0 - 3;
         y_point0 = y_point0 - 1;
         x1 = x1 + 1;
@@ -309,9 +369,10 @@ void gameControl_tick() {
         y2 = y2 + 1;
         x3 = x3 - 1;
         y3 = y3 + 3;
-        rotate--;
+        // rotate--;
+        lean_left(&the_lander);
       } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
-                 (rotate == 0)) {
+                 ((the_lander.angle >= 80) && (the_lander.angle <= 100))) {
         x0 = x0 - 1;
         y_point0 = y_point0 + 3;
         x1 = x1 - 3;
@@ -320,9 +381,10 @@ void gameControl_tick() {
         y2 = y2 - 3;
         x3 = x3 + 3;
         y3 = y3 + 1;
-        rotate--;
+        // rotate--;
+        lean_left(&the_lander);
       } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
-                 (rotate == -1)) {
+                 ((the_lander.angle >= 100) && (the_lander.angle < 120))) {
         x0 = x0 - 1;
         y_point0 = y_point0 + 2;
         x1 = x1 - 2;
@@ -331,9 +393,10 @@ void gameControl_tick() {
         y2 = y2 - 2;
         x3 = x3 + 2;
         y3 = y3 + 1;
-        rotate--;
+        // rotate--;
+        lean_left(&the_lander);
       } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
-                 (rotate == -2)) {
+                 ((the_lander.angle >= 120) && (the_lander.angle < 140))) {
         x0 = x0 + 1;
         y_point0 = y_point0 + 2;
         x1 = x1 - 2;
@@ -342,9 +405,10 @@ void gameControl_tick() {
         y2 = y2 - 2;
         x3 = x3 + 2;
         y3 = y3 - 1;
-        rotate--;
+        // rotate--;
+        lean_left(&the_lander);
       } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
-                 (rotate == -3)) {
+                 ((the_lander.angle >= 140) && (the_lander.angle < 160))) {
         x0 = x0 + 1;
         y_point0 = y_point0 + 3;
         x1 = x1 - 3;
@@ -353,7 +417,8 @@ void gameControl_tick() {
         y2 = y2 - 3;
         x3 = x3 + 3;
         y3 = y3 - 1;
-        rotate--;
+        // rotate--;
+        lean_left(&the_lander);
       }
 
 
@@ -398,6 +463,12 @@ void gameControl_tick() {
     thrust_y = 0;
   }
   tick_is_odd = !tick_is_odd;
+  
+  //helper variable for the speed ranges between 0 and 1
+  third_tick++;
+  // if(third_tick == 3){
+  //   third_tick = 0;
+  // }
 
   if (gameover_control) {
     win_control = didPlayerWin();
