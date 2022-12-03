@@ -9,6 +9,7 @@
 
 struct lander_t {
   double angle;
+  int16_t fuel;
   display_point_t location;
   int32_t vertical_velocity;
   int32_t horizontal_velocity;
