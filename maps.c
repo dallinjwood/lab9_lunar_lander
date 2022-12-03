@@ -152,7 +152,7 @@ bool map2_collide(double x0, double x1, double x2, double x3, double y0,
     }
   } else if (((x0 >= 160) || (x3 >= 160)) && ((x1 <= 190) || (x2 <= 190))) {
     if ((y0 >= 220) || (y1 >= 220) || (y2 >= 220) || (y3 >= 220)) {
-      if ((y_velocity <= 2.000) && (y3 == y2)) {
+      if ((y_velocity <= 0.6) && (y3 == y2)) {
         display_fillScreen(DISPLAY_GREEN);
         win = true;
         return true;
