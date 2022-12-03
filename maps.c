@@ -120,6 +120,8 @@ bool map2_collide(double x0, double x1, double x2, double x3, double y0,
       display_fillScreen(DISPLAY_RED);
       win = false;
       return true;
+    } else {
+      return false;
     }
   } else if (((x0 <= 100) || (x3 <= 100)) && ((x1 >= 100) || (x2 >= 100))) {
     if ((y0 >= 240.00 - (0.4 * x0)) || (y1 >= 166.667 + (0.3333 * x1)) ||
@@ -127,6 +129,8 @@ bool map2_collide(double x0, double x1, double x2, double x3, double y0,
       display_fillScreen(DISPLAY_RED);
       win = false;
       return true;
+    } else {
+      return false;
     }
   } else if (((x0 > 100) || (x3 > 100)) && ((x1 <= 160) || (x2 <= 160))) {
     if ((y0 >= 166.667 + (0.3333 * x0)) || (y1 >= 166.667 + (0.3333 * x1)) ||
@@ -134,6 +138,8 @@ bool map2_collide(double x0, double x1, double x2, double x3, double y0,
       display_fillScreen(DISPLAY_RED);
       win = false;
       return true;
+    } else {
+      return false;
     }
   } else if (((x0 <= 160) || (x3 <= 160)) && ((x1 >= 160) || (x2 >= 160))) {
     if ((y0 >= 166.667 + (0.3333 * x0)) || (y1 >= 220) || (y2 >= 220) ||
@@ -141,6 +147,8 @@ bool map2_collide(double x0, double x1, double x2, double x3, double y0,
       display_fillScreen(DISPLAY_RED);
       win = false;
       return true;
+    } else {
+      return false;
     }
   } else if (((x0 >= 160) || (x3 >= 160)) && ((x1 <= 190) || (x2 <= 190))) {
     if ((y0 >= 220) || (y1 >= 220) || (y2 >= 220) || (y3 >= 220)) {
@@ -153,6 +161,8 @@ bool map2_collide(double x0, double x1, double x2, double x3, double y0,
         win = false;
         return true;
       }
+    } else {
+      return false;
     }
   } else if (((x0 <= 190) || (x3 <= 190)) && ((x1 >= 190) || (x2 >= 190))) {
     if ((y0 >= 220) || (y1 >= 323.636 - (0.54545 * x1)) ||
@@ -160,6 +170,8 @@ bool map2_collide(double x0, double x1, double x2, double x3, double y0,
       display_fillScreen(DISPLAY_RED);
       win = false;
       return true;
+    } else {
+      return false;
     }
   } else if (((x0 >= 190) || (x3 >= 190)) && ((x1 <= 300) || (x2 <= 300))) {
     if ((y0 >= 323.636 - (0.54545 * x0)) || (y1 >= 323.636 - (0.54545 * x1)) ||
@@ -167,6 +179,8 @@ bool map2_collide(double x0, double x1, double x2, double x3, double y0,
       display_fillScreen(DISPLAY_RED);
       win = false;
       return true;
+    } else {
+      return false;
     }
   } else if (((x0 <= 300) || (x3 <= 300)) && ((x1 >= 300) || (x2 >= 300))) {
     if ((y0 >= 323.636 - (0.54545 * x0)) || (y1 >= (4.0 * x1) - 1040.00) ||
@@ -174,6 +188,8 @@ bool map2_collide(double x0, double x1, double x2, double x3, double y0,
       display_fillScreen(DISPLAY_RED);
       win = false;
       return true;
+    } else {
+      return false;
     }
   } else if (((x0 >= 300) || (x3 >= 300))) {
     if ((y0 >= (4.0 * x0) - 1040.00) || (y1 >= (4.0 * x1) - 1040.00) ||
@@ -181,6 +197,8 @@ bool map2_collide(double x0, double x1, double x2, double x3, double y0,
       display_fillScreen(DISPLAY_RED);
       win = false;
       return true;
+    } else {
+      return false;
     }
   }
 }
