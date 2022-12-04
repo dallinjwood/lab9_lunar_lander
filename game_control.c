@@ -11,7 +11,7 @@
 #define THRUST_SCALER 0.1
 #define gravity 0.02
 #define FUEL_TEXT_CURSOR_X 30
-#define FUEL_TEXT_CURSOR_Y 30
+#define FUEL_TEXT_CURSOR_Y 25
 #define FUEL_TEXT "Fuel: "
 #define FUEL_SCALAR 1
 #define MAX_OFFSCREEN_CONSTANT 900
@@ -299,19 +299,24 @@ void gameControl_tick() {
 
     // change fuel text color based in how much fuel is left
     if (the_lander.fuel > 500) {
+      display_drawRoundRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y + 10, the_lander.fuel / 10, 10, 2, DISPLAY_WHITE);
       display_fillRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y, 30, 10,
                        DISPLAY_BLACK);
       display_printDecimalInt(the_lander.fuel);
     } else if (the_lander.fuel > 300 && the_lander.fuel <= 500) {
+      display_drawRoundRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y + 10, the_lander.fuel / 10, 10, 2, DISPLAY_YELLOW);
       display_setTextColor(DISPLAY_YELLOW);
       display_fillRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y, 30, 10,
                        DISPLAY_BLACK);
       display_printDecimalInt(the_lander.fuel);
+
     } else if (the_lander.fuel >= 0 && the_lander.fuel <= 300) {
+      display_drawRoundRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y + 10, the_lander.fuel / 10, 10, 2, DISPLAY_RED);
       display_setTextColor(DISPLAY_RED);
       display_fillRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y, 30, 10,
                        DISPLAY_BLACK);
       display_printDecimalInt(the_lander.fuel);
+
     }
 
     printf("Fuel: %d \n", the_lander.fuel);
@@ -665,7 +670,7 @@ void gameControl_tick() {
         lastDrawRight = false;
 
       } else if (lastDrawTop){
-        display_fillRect(0,0,DISPLAY_WIDTH, 25, DISPLAY_BLACK);
+        display_fillRect(0,0,DISPLAY_WIDTH, 20, DISPLAY_BLACK);
         lastDrawTop = false;
       }
 
