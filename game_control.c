@@ -11,7 +11,7 @@
 #define THRUST_SCALER 0.1
 #define gravity 0.02
 #define FUEL_TEXT_CURSOR_X 30
-#define FUEL_TEXT_CURSOR_Y 30
+#define FUEL_TEXT_CURSOR_Y 20
 #define FUEL_TEXT "Fuel: "
 #define FUEL_SCALAR 1
 #define MAX_OFFSCREEN_CONSTANT 900
@@ -666,7 +666,7 @@ void gameControl_tick() {
           lastDrawRight = false;
 
         } else if (lastDrawTop) {
-          display_fillRect(0, 0, DISPLAY_WIDTH, 25, DISPLAY_BLACK);
+          display_fillRect(0, 0, DISPLAY_WIDTH, 20, DISPLAY_BLACK);
           lastDrawTop = false;
         }
 

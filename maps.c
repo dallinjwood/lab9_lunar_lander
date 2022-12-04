@@ -24,8 +24,8 @@ void map2() {
 }
 
 void map3() {
-  display_drawLine(0, 5, 50, 5, DISPLAY_WHITE);
-  display_drawLine(50, 5, 50, 180, DISPLAY_WHITE);
+  display_drawLine(0, 35, 50, 35, DISPLAY_WHITE);
+  display_drawLine(50, 35, 50, 180, DISPLAY_WHITE);
   display_drawLine(50, 180, 100, 215, DISPLAY_WHITE);
   display_drawLine(100, 215, 140, 230, DISPLAY_WHITE);
   display_drawLine(140, 230, 160, 230, DISPLAY_DARK_YELLOW);
@@ -223,15 +223,15 @@ bool map3_collide(double x0, double x1, double x2, double x3, double y0,
     win = false;
     return true;
   } else if (((x0 >= 0) || (x3 >= 0)) && ((x1 <= 50) || (x2 <= 50))) {
-    if ((y0 >= 5) || (y1 >= 5) || (y2 >= 5) || (y3 >= 5)) {
+    if ((y0 >= 35) || (y1 >= 35) || (y2 >= 35) || (y3 >= 35)) {
       win = false;
       return true;
     } else {
       return false;
     }
   } else if (((x0 <= 50) || (x3 <= 50)) && ((x1 >= 50) || (x2 >= 50))) {
-    if ((y0 >= 5) || (y1 >= 145.00 + (0.7 * x1)) ||
-        (y2 >= 145.00 + (0.7 * x2)) || (y3 >= 5)) {
+    if ((y0 >= 35) || (y1 >= 145.00 + (0.7 * x1)) ||
+        (y2 >= 145.00 + (0.7 * x2)) || (y3 >= 35)) {
       win = false;
       return true;
     } else {
