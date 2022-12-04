@@ -1,19 +1,20 @@
 #include "lander.h"
 
-//TODO:: #define for init values
-//TODO:: #define for angel ranges?
+// TODO:: #define for init values
+// TODO:: #define for angel ranges?
 
-//TODO:: there is a bug where if theta is 90 degrees it still changes the x_velocity when it should be zero at that angle
+// TODO:: there is a bug where if theta is 90 degrees it still changes the
+// x_velocity when it should be zero at that angle
 static double cos_degrees(double theta) {
 
   // convert radians to degrees
 
   theta = theta * (3.14 / 180);
   // printf("cos_degrees %f\n", cos(theta));
-  if(theta == 90){
+  if (theta == 90) {
     return 0;
   } else {
-  return cos(theta);
+    return cos(theta);
   }
 }
 
@@ -29,8 +30,8 @@ void lander_init(struct lander_t *lander) {
   // lander->fuel = 100;
   lander->angle = 90;
   lander->has_landed = false;
-  lander->location.x = 160;
-  lander->location.y = 0;
+  // lander->location.x = 160;
+  // lander->location.y = 0;
   lander->vertical_velocity = 1;
   lander->horizontal_velocity = 0;
   printf("angle: %f\n", lander->angle);
@@ -61,26 +62,26 @@ void lean_right(struct lander_t *lander) {
 
 void thrust(struct lander_t *lander);
 
-// draw the lander at the current angle
-void draw_lander(struct lander_t *lander) {}
+// // draw the lander at the current angle
+// void draw_lander(struct lander_t *lander) {}
 
-void draw_lander_pos1(struct lander_t *lander) {}
+// void draw_lander_pos1(struct lander_t *lander) {}
 
-void draw_lander_pos1(struct lander_t *lander) {}
+// void draw_lander_pos1(struct lander_t *lander) {}
 
-void draw_lander_pos1(struct lander_t *lander) {}
+// void draw_lander_pos1(struct lander_t *lander) {}
 
-void draw_lander_pos1(struct lander_t *lander) {}
+// void draw_lander_pos1(struct lander_t *lander) {}
 
-void draw_lander_pos1(struct lander_t *lander) {}
+// void draw_lander_pos1(struct lander_t *lander) {}
 
-void draw_lander_pos1(struct lander_t *lander) {}
+// void draw_lander_pos1(struct lander_t *lander) {}
 
-void draw_lander_pos1(struct lander_t *lander) {}
+// void draw_lander_pos1(struct lander_t *lander) {}
 
-void draw_lander_pos1(struct lander_t *lander) {}
+// void draw_lander_pos1(struct lander_t *lander) {}
 
-void draw_lander_pos1(struct lander_t *lander) {}
+// void draw_lander_pos1(struct lander_t *lander) {}
 
-//TODO:: do we need this?
+// TODO:: do we need this?
 display_point_t get_location();
