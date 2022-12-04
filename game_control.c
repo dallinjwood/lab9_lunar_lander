@@ -8,10 +8,10 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#define THRUST_SCALER 0.15
+#define THRUST_SCALER 0.1
 #define gravity 0.02
 #define FUEL_TEXT_CURSOR_X 30
-#define FUEL_TEXT_CURSOR_Y 10
+#define FUEL_TEXT_CURSOR_Y 30
 #define FUEL_TEXT "Fuel: "
 #define FUEL_SCALAR 1
 #define MAX_OFFSCREEN_CONSTANT 900
@@ -663,13 +663,13 @@ void gameControl_tick() {
                             (int)y_point0 - 5 - triangle_scalar,
                             DISPLAY_WHITE);
 
-        display_fillTriangle(5,
-                            (int)y_point0,
-                            15 ,
-                            (int)y_point0 + 5,
-                            15 ,
-                            (int)y_point0 - 5,
-                            DISPLAY_WHITE);
+        // display_fillTriangle(5,
+        //                     (int)y_point0,
+        //                     15 ,
+        //                     (int)y_point0 + 5,
+        //                     15 ,
+        //                     (int)y_point0 - 5,
+        //                     DISPLAY_WHITE);
 
 
         // display_fillRect(0, 0, 25, DISPLAY_HEIGHT, DISPLAY_BLACK);
@@ -689,27 +689,27 @@ void gameControl_tick() {
                             (int)y_point0 + 5 + triangle_scalar,
                             DISPLAY_WHITE);
 
-        // display_fillTriangle(DISPLAY_WIDTH ,
-        //                     (int)y_point0,
-        //                     DISPLAY_WIDTH - 15 ,
-        //                     (int)y_point0 - 5 ,
-        //                     DISPLAY_WIDTH - 15 ,
-        //                     (int)y_point0 + 5 ,
-        //                     DISPLAY_WHITE);
-
         lastDrawRight = true;
       } else if((y_point0 <= -10) || (y3 <= -10)){
-        if(y_point0 <= -MAX_OFFSCREEN_CONSTANT){
+        if(y_point0 <= -MAX_OFFSCREEN_CONSTANT + 400){
            triangle_scalar = (MAX_OFFSCREEN_CONSTANT - triangle_scalar + (int) y_point0) / 30 ;
         }
 
-        // display_fillTriangle(x0,
-        //                   0,
-        //                   5 - triangle_scalar,
-        //                   x0 - 15 - (triangle_scalar / 4),
-        //                   5 + triangle_scalar,
-        //                   x0 - 15 - (triangle_scalar / 4),
-        //                   DISPLAY_WHITE);
+        // display_fillTriangle(0 ,
+        //                     (int)y_point0,
+        //                     15 + (triangle_scalar / 4),
+        //                     (int)y_point0 + 5 + triangle_scalar,
+        //                     15 + (triangle_scalar / 4),
+        //                     (int)y_point0 - 5 - triangle_scalar,
+        //                     DISPLAY_WHITE);
+
+        display_fillTriangle((int)x0,
+                          0,
+                          (int)x0 - 15 - triangle_scalar ,
+                          15 - (triangle_scalar / 4),
+                          (int)x0 + 15 + triangle_scalar,
+                          15 - (triangle_scalar / 4),
+                          DISPLAY_WHITE);
         
         lastDrawTop = true;
       }
