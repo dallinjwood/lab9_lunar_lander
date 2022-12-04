@@ -287,6 +287,8 @@ void gameControl_tick() {
     printf("NOT DEAD\n");
 
     // fuel text cursor
+    display_setTextColor(DISPLAY_WHITE);
+    display_setTextSize(1);
     display_setCursor(FUEL_TEXT_CURSOR_X, FUEL_TEXT_CURSOR_Y);
     display_println(FUEL_TEXT);
 
