@@ -27,7 +27,7 @@ static double sin_degrees(double theta) {
 }
 
 void lander_init(struct lander_t *lander) {
-  // lander->fuel = 100;
+  lander->fuel = 10000;
   lander->angle = 90;
   lander->has_landed = false;
   // lander->location.x = 160;
