@@ -26,11 +26,11 @@ static double sin_degrees(double theta) {
 }
 
 void lander_init(struct lander_t *lander) {
-  // lander->fuel = 100;
+  lander->fuel = 10000;
   lander->angle = 90;
   lander->has_landed = false;
-  lander->location.x = 160;
-  lander->location.y = 0;
+  // lander->location.x = 160;
+  // lander->location.y = 0;
   lander->vertical_velocity = 1;
   lander->horizontal_velocity = 0;
   printf("angle: %f\n", lander->angle);
@@ -61,26 +61,26 @@ void lean_right(struct lander_t *lander) {
 
 void thrust(struct lander_t *lander);
 
-// draw the lander at the current angle
-void draw_lander(struct lander_t *lander) {}
+// // draw the lander at the current angle
+// void draw_lander(struct lander_t *lander) {}
 
-void draw_lander_pos1(struct lander_t *lander) {}
+// void draw_lander_pos1(struct lander_t *lander) {}
 
-void draw_lander_pos1(struct lander_t *lander) {}
+// void draw_lander_pos1(struct lander_t *lander) {}
 
-void draw_lander_pos1(struct lander_t *lander) {}
+// void draw_lander_pos1(struct lander_t *lander) {}
 
-void draw_lander_pos1(struct lander_t *lander) {}
+// void draw_lander_pos1(struct lander_t *lander) {}
 
-void draw_lander_pos1(struct lander_t *lander) {}
+// void draw_lander_pos1(struct lander_t *lander) {}
 
-void draw_lander_pos1(struct lander_t *lander) {}
+// void draw_lander_pos1(struct lander_t *lander) {}
 
-void draw_lander_pos1(struct lander_t *lander) {}
+// void draw_lander_pos1(struct lander_t *lander) {}
 
-void draw_lander_pos1(struct lander_t *lander) {}
+// void draw_lander_pos1(struct lander_t *lander) {}
 
-void draw_lander_pos1(struct lander_t *lander) {}
+// void draw_lander_pos1(struct lander_t *lander) {}
 
 //TODO:: do we need this?
 display_point_t get_location();
