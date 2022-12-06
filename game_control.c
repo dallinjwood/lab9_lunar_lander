@@ -67,6 +67,9 @@ static uint16_t transition_cnt = 0;
 static uint16_t transition_num_ticks = 0;
 static uint8_t button_value = 0;
 
+//TEST DRAWING LANDER TODO
+struct lander_t other_lander;
+
 void gameControl_init_next_level() {
   x0 = 320;
   y_point0 = 0;
@@ -367,7 +370,6 @@ void gameControl_tick() {
           x1 = x1 + (int)x_velocity;
           x2 = x2 + (int)x_velocity;
           x3 = x3 + (int)x_velocity;
-
         } else if ((third_tick % 4 < 3) && (y_velocity < 1) &&
                    (y_velocity > 0.71)) {
           y_point0 = y_point0 + 1;
@@ -656,7 +658,7 @@ void gameControl_tick() {
           // rotate--;
           lean_left(&the_lander);
         }
-
+        
         // offscreen inidication
 
         // erase the triangle
