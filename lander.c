@@ -1,10 +1,16 @@
 #include "lander.h"
 
+static bool tick_is_odd = true;
+static uint64_t third_tick = 0;
+
+uint8_t button_value;
+
+
 // TODO:: #define for init values
 // TODO:: #define for angel ranges?
 
 // TODO:: there is a bug where if theta is 90 degrees it still changes the
-// x_velocity when it should be zero at that angle
+// lander->velocity_x when it should be zero at that angle
 static double cos_degrees(double theta) {
 
   // convert radians to degrees
@@ -42,10 +48,14 @@ void lander_init(struct lander_t *lander) {
   lander->bottom_left.y = BOTTOM_Y_INIT;
 
   //set intial velocities
-  lander->vertical_velocity = 1;
-  lander->horizontal_velocity = 0;
+  lander->velocity_y = 0.9;
+  lander->velocity_x = -1;
+
+  //set initial thrust values to 0
+  lander->thrust_x = 0;
+  lander->thrust_y = 0;
   
-  lander->fuel = 1000;
+  lander->fuel = 10000;
 
   printf("angle: %f\n", lander->angle);
 }
@@ -77,16 +87,109 @@ void draw_lander_pos_Neg4(struct lander_t *lander, bool erase) {
 
   //Erase
   if (erase) {
-    display_drawFastHLine(lander->bottom_right.x - P_6, lander->bottom_right.y + P_0, P_7, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_right.x - P_8, lander->bottom_right.y + P_1, P_8, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_right.x - P_9, lander->bottom_right.y + P_2, P_8, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_right.x - P_9, lander->bottom_right.y + P_3, P_8, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_right.x - P_9, lander->bottom_right.y + P_4, P_8, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_right.x - P_9, lander->bottom_right.y + P_5, P_8, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_right.x - P_9, lander->bottom_right.y + P_6, P_8, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_right.x - P_9, lander->bottom_right.y + P_7, P_8, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_right.x - P_8, lander->bottom_right.y + P_8, P_8, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_right.x - P_6, lander->bottom_right.y + P_9, P_7, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_right.x - P_6, lander->bottom_right.y + P_0, P_7, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_right.x - P_8, lander->bottom_right.y + P_1, P_8, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_right.x - P_9, lander->bottom_right.y + P_2, P_8, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_right.x - P_9, lander->bottom_right.y + P_3, P_8, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_right.x - P_9, lander->bottom_right.y + P_4, P_8, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_right.x - P_9, lander->bottom_right.y + P_5, P_8, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_right.x - P_9, lander->bottom_right.y + P_6, P_8, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_right.x - P_9, lander->bottom_right.y + P_7, P_8, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_right.x - P_8, lander->bottom_right.y + P_8, P_8, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_right.x - P_6, lander->bottom_right.y + P_9, P_7, LANDER_BLACK);
+
+    //Erase critical points
+    display_drawPixel(lander->top_left.x, lander->top_left.y, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x, lander->top_right.y, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x, lander->bottom_right.y, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x, lander->bottom_left.y, LANDER_BLACK);
+
+    //Erase everything else
+
+    //Line 1
+    display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_6, lander->bottom_right.y, LANDER_BLACK);
+    //Line 2
+    display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_6, lander->bottom_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_7, lander->bottom_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_8, lander->bottom_right.y + P_1, LANDER_BLACK);
+    //Line 3
+    display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_6, lander->bottom_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_7, lander->bottom_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_9, lander->bottom_right.y + P_2, LANDER_BLACK);
+    //Line 4
+    display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_6, lander->bottom_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_7, lander->bottom_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_8, lander->bottom_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_9, lander->bottom_right.y + P_3, LANDER_BLACK);
+    //Line 5
+    display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_6, lander->bottom_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_7, lander->bottom_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_8, lander->bottom_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_9, lander->bottom_right.y + P_4, LANDER_BLACK);
+    //Line 6
+    display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_6, lander->bottom_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_7, lander->bottom_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_8, lander->bottom_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_9, lander->bottom_right.y + P_5, LANDER_BLACK);
+    //Line 7
+    display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_6, lander->bottom_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_7, lander->bottom_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_8, lander->bottom_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_9, lander->bottom_right.y + P_6, LANDER_BLACK);
+    //Line 8
+    display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_6, lander->bottom_right.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_7, lander->bottom_right.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_9, lander->bottom_right.y + P_7, LANDER_BLACK);
+    //Line 9
+    display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_6, lander->bottom_right.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_7, lander->bottom_right.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_8, lander->bottom_right.y + P_8, LANDER_BLACK);
+    //Line 10
+    display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_9, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_9, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_9, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_9, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y + P_9, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_6, lander->bottom_right.y + P_9, LANDER_BLACK);
   }
 
   //Draw
@@ -189,17 +292,107 @@ void draw_lander_pos_Neg4(struct lander_t *lander, bool erase) {
 void draw_lander_pos_Neg3(struct lander_t *lander, bool erase) {
   //Erase
   if (erase) {
-    display_drawFastHLine(lander->bottom_right.x - P_7, lander->bottom_right.y - P_1, P_6, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_right.x - P_7, lander->bottom_right.y + P_0, P_8, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_right.x - P_8, lander->bottom_right.y + P_1, P_9, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_right.x - P_8, lander->bottom_right.y + P_2, P_7, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_right.x - P_9, lander->bottom_right.y + P_3, P_8, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_right.x - P_9, lander->bottom_right.y + P_4, P_8, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_right.x - P_9, lander->bottom_right.y + P_5, P_7, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_right.x - P_9, lander->bottom_right.y + P_6, P_7, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_right.x - P_8, lander->bottom_right.y + P_7, P_6, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_right.x - P_4, lander->bottom_right.y + P_8, P_4, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_right.x - P_3, lander->bottom_right.y + P_9, P_3, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_right.x - P_7, lander->bottom_right.y - P_1, P_6, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_right.x - P_7, lander->bottom_right.y + P_0, P_8, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_right.x - P_8, lander->bottom_right.y + P_1, P_9, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_right.x - P_8, lander->bottom_right.y + P_2, P_7, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_right.x - P_9, lander->bottom_right.y + P_3, P_8, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_right.x - P_9, lander->bottom_right.y + P_4, P_8, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_right.x - P_9, lander->bottom_right.y + P_5, P_7, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_right.x - P_9, lander->bottom_right.y + P_6, P_7, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_right.x - P_8, lander->bottom_right.y + P_7, P_6, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_right.x - P_4, lander->bottom_right.y + P_8, P_4, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_right.x - P_3, lander->bottom_right.y + P_9, P_3, LANDER_BLACK);
+
+    //Erase critical points
+    display_drawPixel(lander->top_left.x, lander->top_left.y, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x, lander->top_right.y, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x, lander->bottom_right.y, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x, lander->bottom_left.y, LANDER_BLACK);
+
+    //Erase everything else
+
+    //Line 1
+    display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y - P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y - P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y - P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y - P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_6, lander->bottom_right.y - P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_7, lander->bottom_right.y - P_1, LANDER_BLACK);
+    //Line 2
+    display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_0, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_0, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_0, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_0, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y + P_0, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_6, lander->bottom_right.y + P_0, LANDER_BLACK);
+    //Line 3
+    display_drawPixel(lander->bottom_right.x - P_0, lander->bottom_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_6, lander->bottom_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_7, lander->bottom_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_9, lander->bottom_right.y + P_1, LANDER_BLACK);
+    //Line 4
+    display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_6, lander->bottom_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_7, lander->bottom_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_8, lander->bottom_right.y + P_2, LANDER_BLACK);
+    //Line 5
+    display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_6, lander->bottom_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_7, lander->bottom_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_8, lander->bottom_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_9, lander->bottom_right.y + P_3, LANDER_BLACK);
+    //Line 6
+    display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_6, lander->bottom_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_7, lander->bottom_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_8, lander->bottom_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_9, lander->bottom_right.y + P_4, LANDER_BLACK);
+    //Line 7
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_6, lander->bottom_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_7, lander->bottom_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_8, lander->bottom_right.y + P_5, LANDER_BLACK);
+    //Line 8
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_6, lander->bottom_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_7, lander->bottom_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_8, lander->bottom_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_9, lander->bottom_right.y + P_6, LANDER_BLACK);
+    //Line 9
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_6, lander->bottom_right.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_7, lander->bottom_right.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_8, lander->bottom_right.y + P_7, LANDER_BLACK);
+    //Line 10
+    display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y + P_8, LANDER_BLACK);
+    //Line 11
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_9, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_9, LANDER_BLACK);
+
   }
 
   //Draw
@@ -299,18 +492,112 @@ void draw_lander_pos_Neg2(struct lander_t *lander, bool erase) {
 
   //Erase
   if (erase) {
-    display_drawFastHLine(lander->top_right.x - P_1, lander->top_right.y + P_0, P_3,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_right.x - P_2, lander->top_right.y + P_1, P_6,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_right.x - P_3, lander->top_right.y + P_2, P_8,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_right.x - P_3, lander->top_right.y + P_3, P_10, LANDER_BLACK);
-    display_drawFastHLine(lander->top_right.x - P_4, lander->top_right.y + P_4, P_12, LANDER_BLACK);
-    display_drawFastHLine(lander->top_right.x - P_4, lander->top_right.y + P_5, P_12, LANDER_BLACK);
-    display_drawFastHLine(lander->top_right.x - P_4, lander->top_right.y + P_6, P_8,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_right.x - P_3, lander->top_right.y + P_7, P_6,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_right.x - P_2, lander->top_right.y + P_8, P_5,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_right.x - P_1, lander->top_right.y + P_9, P_4,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_right.x - P_0, lander->top_right.y + P_10, P_2, LANDER_BLACK);
-    display_drawFastHLine(lander->top_right.x + P_1, lander->top_right.y + P_11, P_1, LANDER_BLACK);
+    // display_drawFastHLine(lander->top_right.x - P_1, lander->top_right.y + P_0, P_3,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_right.x - P_2, lander->top_right.y + P_1, P_6,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_right.x - P_3, lander->top_right.y + P_2, P_8,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_right.x - P_3, lander->top_right.y + P_3, P_10, LANDER_BLACK);
+    // display_drawFastHLine(lander->top_right.x - P_4, lander->top_right.y + P_4, P_12, LANDER_BLACK);
+    // display_drawFastHLine(lander->top_right.x - P_4, lander->top_right.y + P_5, P_12, LANDER_BLACK);
+    // display_drawFastHLine(lander->top_right.x - P_4, lander->top_right.y + P_6, P_8,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_right.x - P_3, lander->top_right.y + P_7, P_6,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_right.x - P_2, lander->top_right.y + P_8, P_5,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_right.x - P_1, lander->top_right.y + P_9, P_4,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_right.x - P_0, lander->top_right.y + P_10, P_2, LANDER_BLACK);
+    // display_drawFastHLine(lander->top_right.x + P_1, lander->top_right.y + P_11, P_1, LANDER_BLACK);
+
+    //Draw critical points
+    display_drawPixel(lander->top_left.x, lander->top_left.y, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x, lander->top_right.y, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x, lander->bottom_right.y, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x, lander->bottom_left.y, LANDER_BLACK);
+
+    //Draw everything else
+
+    //Line 1
+    display_drawPixel(lander->top_right.x + P_1, lander->top_right.y + P_0, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_1, lander->top_right.y + P_0, LANDER_BLACK);
+    //Line 2
+    display_drawPixel(lander->top_right.x + P_3, lander->top_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_2, lander->top_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_1, lander->top_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_0, lander->top_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_1, lander->top_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_2, lander->top_right.y + P_1, LANDER_BLACK);
+    //Line 3
+    display_drawPixel(lander->top_right.x + P_4, lander->top_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_3, lander->top_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_2, lander->top_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_1, lander->top_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_0, lander->top_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_1, lander->top_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_2, lander->top_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_3, lander->top_right.y + P_2, LANDER_BLACK);
+    //Line 4
+    display_drawPixel(lander->top_right.x + P_6, lander->top_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_5, lander->top_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_4, lander->top_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_3, lander->top_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_2, lander->top_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_1, lander->top_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_0, lander->top_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_1, lander->top_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_2, lander->top_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_3, lander->top_right.y + P_3, LANDER_BLACK);
+    //Line 5
+    display_drawPixel(lander->top_right.x + P_7, lander->top_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_6, lander->top_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_5, lander->top_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_4, lander->top_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_3, lander->top_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_2, lander->top_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_1, lander->top_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_0, lander->top_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_1, lander->top_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_2, lander->top_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_3, lander->top_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_4, lander->top_right.y + P_4, LANDER_BLACK);    
+    //Line 6
+    display_drawPixel(lander->top_right.x + P_6, lander->top_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_5, lander->top_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_4, lander->top_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_3, lander->top_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_2, lander->top_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_1, lander->top_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_0, lander->top_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_1, lander->top_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_2, lander->top_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_3, lander->top_right.y + P_5, LANDER_BLACK);
+    //Line 7
+    display_drawPixel(lander->top_right.x + P_3, lander->top_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_2, lander->top_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_1, lander->top_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_0, lander->top_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_1, lander->top_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_2, lander->top_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_3, lander->top_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_4, lander->top_right.y + P_6, LANDER_BLACK);
+    //Line 8
+    display_drawPixel(lander->top_right.x + P_2, lander->top_right.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_1, lander->top_right.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_0, lander->top_right.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_1, lander->top_right.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_2, lander->top_right.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_3, lander->top_right.y + P_7, LANDER_BLACK);
+    //Line 9
+    display_drawPixel(lander->top_right.x + P_2, lander->top_right.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_1, lander->top_right.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_0, lander->top_right.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_1, lander->top_right.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_2, lander->top_right.y + P_8, LANDER_BLACK);
+    //Line 10
+    display_drawPixel(lander->top_right.x + P_2, lander->top_right.y + P_9, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_1, lander->top_right.y + P_9, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_0, lander->top_right.y + P_9, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_1, lander->top_right.y + P_9, LANDER_BLACK);
+    //Line 11
+    display_drawPixel(lander->top_right.x + P_1, lander->top_right.y + P_10, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_0, lander->top_right.y + P_10, LANDER_BLACK);
+
   }
 
   //Draw
@@ -414,17 +701,105 @@ void draw_lander_pos_Neg1(struct lander_t *lander, bool erase) {
 
   //Erase
   if (erase) {
-    display_drawFastHLine(lander->top_right.x - P_2, lander->top_right.y + P_0, P_4,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_right.x - P_4, lander->top_right.y + P_1, P_7,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_right.x - P_6, lander->top_right.y + P_2, P_9,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_right.x - P_6, lander->top_right.y + P_3, P_9,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_right.x - P_6, lander->top_right.y + P_4, P_10, LANDER_BLACK);
-    display_drawFastHLine(lander->top_right.x - P_6, lander->top_right.y + P_5, P_10, LANDER_BLACK);
-    display_drawFastHLine(lander->top_right.x - P_6, lander->top_right.y + P_6, P_11, LANDER_BLACK);
-    display_drawFastHLine(lander->top_right.x - P_6, lander->top_right.y + P_7, P_6,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_right.x + P_3, lander->top_right.y + P_7, P_1,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_right.x - P_5, lander->top_right.y + P_8, P_2,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_right.x - P_4, lander->top_right.y + P_9, P_1,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_right.x - P_2, lander->top_right.y + P_0, P_4,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_right.x - P_4, lander->top_right.y + P_1, P_7,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_right.x - P_6, lander->top_right.y + P_2, P_9,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_right.x - P_6, lander->top_right.y + P_3, P_9,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_right.x - P_6, lander->top_right.y + P_4, P_10, LANDER_BLACK);
+    // display_drawFastHLine(lander->top_right.x - P_6, lander->top_right.y + P_5, P_10, LANDER_BLACK);
+    // display_drawFastHLine(lander->top_right.x - P_6, lander->top_right.y + P_6, P_11, LANDER_BLACK);
+    // display_drawFastHLine(lander->top_right.x - P_6, lander->top_right.y + P_7, P_6,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_right.x + P_3, lander->top_right.y + P_7, P_1,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_right.x - P_5, lander->top_right.y + P_8, P_2,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_right.x - P_4, lander->top_right.y + P_9, P_1,  LANDER_BLACK);
+
+    //Draw critical points
+    display_drawPixel(lander->top_left.x, lander->top_left.y, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x, lander->top_right.y, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x, lander->bottom_right.y, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x, lander->bottom_left.y, LANDER_BLACK);
+
+    //Draw everything else
+
+    //Line 1
+    display_drawPixel(lander->top_right.x + P_1, lander->top_right.y + P_0, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_1, lander->top_right.y + P_0, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_2, lander->top_right.y + P_0, LANDER_BLACK);
+    //Line 2
+    display_drawPixel(lander->top_right.x + P_2, lander->top_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_1, lander->top_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_0, lander->top_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_1, lander->top_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_2, lander->top_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_3, lander->top_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_4, lander->top_right.y + P_1, LANDER_BLACK);
+    //Line 3
+    display_drawPixel(lander->top_right.x + P_2, lander->top_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_1, lander->top_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_0, lander->top_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_1, lander->top_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_2, lander->top_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_3, lander->top_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_4, lander->top_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_6, lander->top_right.y + P_2, LANDER_BLACK);
+    //Line 4
+    display_drawPixel(lander->top_right.x + P_2, lander->top_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_1, lander->top_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_0, lander->top_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_1, lander->top_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_2, lander->top_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_3, lander->top_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_4, lander->top_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_5, lander->top_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_6, lander->top_right.y + P_3, LANDER_BLACK);
+    //Line 5
+    display_drawPixel(lander->top_right.x + P_3, lander->top_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_2, lander->top_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_1, lander->top_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_0, lander->top_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_1, lander->top_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_2, lander->top_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_3, lander->top_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_4, lander->top_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_5, lander->top_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_6, lander->top_right.y + P_4, LANDER_BLACK);
+    //Line 6
+    display_drawPixel(lander->top_right.x + P_3, lander->top_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_2, lander->top_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_1, lander->top_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_0, lander->top_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_1, lander->top_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_2, lander->top_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_3, lander->top_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_4, lander->top_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_5, lander->top_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_6, lander->top_right.y + P_5, LANDER_BLACK);
+    //Line 7
+    display_drawPixel(lander->top_right.x + P_4, lander->top_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_3, lander->top_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_2, lander->top_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x + P_1, lander->top_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_0, lander->top_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_1, lander->top_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_2, lander->top_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_3, lander->top_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_4, lander->top_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_5, lander->top_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_6, lander->top_right.y + P_6, LANDER_BLACK);
+    //Line 8
+    display_drawPixel(lander->top_right.x + P_3, lander->top_right.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_1, lander->top_right.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_2, lander->top_right.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_3, lander->top_right.y + P_7, LANDER_BLACK);    
+    display_drawPixel(lander->top_right.x - P_4, lander->top_right.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_5, lander->top_right.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_6, lander->top_right.y + P_7, LANDER_BLACK);
+    //Line 9
+    display_drawPixel(lander->top_right.x - P_4, lander->top_right.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x - P_5, lander->top_right.y + P_8, LANDER_BLACK);
+    //Line 10
+    display_drawPixel(lander->top_right.x - P_4, lander->top_left.y + P_9, LANDER_BLACK);
+
   }
 
   //Draw
@@ -521,18 +896,110 @@ void draw_lander_pos_Neg1(struct lander_t *lander, bool erase) {
 void draw_lander_pos_0(struct lander_t *lander, bool erase) {
   //Erase
   if (erase) {
-    display_drawFastHLine(lander->top_left.x + P_0, lander->top_left.y - P_1, P_6,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x - P_1, lander->top_left.y + P_0, P_8,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x - P_1, lander->top_left.y + P_1, P_8,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x - P_1, lander->top_left.y + P_2, P_8,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x - P_2, lander->top_left.y + P_3, P_10, LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x - P_2, lander->top_left.y + P_4, P_10, LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x - P_2, lander->top_left.y + P_5, P_10, LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x - P_2, lander->top_left.y + P_6, P_10, LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x - P_2, lander->top_left.y + P_7, P_2,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x - P_2, lander->top_left.y + P_8, P_1,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x + P_6, lander->top_left.y + P_7, P_2,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x + P_7, lander->top_left.y + P_8, P_1,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x + P_0, lander->top_left.y - P_1, P_6,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x - P_1, lander->top_left.y + P_0, P_8,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x - P_1, lander->top_left.y + P_1, P_8,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x - P_1, lander->top_left.y + P_2, P_8,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x - P_2, lander->top_left.y + P_3, P_10, LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x - P_2, lander->top_left.y + P_4, P_10, LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x - P_2, lander->top_left.y + P_5, P_10, LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x - P_2, lander->top_left.y + P_6, P_10, LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x - P_2, lander->top_left.y + P_7, P_2,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x - P_2, lander->top_left.y + P_8, P_1,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x + P_6, lander->top_left.y + P_7, P_2,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x + P_7, lander->top_left.y + P_8, P_1,  LANDER_BLACK);
+
+    // printf("erasing\n");
+
+    //Erase critical points
+    display_drawPixel(lander->top_left.x, lander->top_left.y, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x, lander->top_right.y, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x, lander->bottom_right.y, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x, lander->bottom_left.y, LANDER_BLACK);
+
+    //Erase everything else
+
+    //Line 0
+    display_drawPixel(lander->top_left.x + P_0, lander->top_left.y - P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_1, lander->top_left.y - P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_2, lander->top_left.y - P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_3, lander->top_left.y - P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_4, lander->top_left.y - P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_5, lander->top_left.y - P_1, LANDER_BLACK);
+    //Line 1
+    display_drawPixel(lander->top_left.x - P_1, lander->top_left.y + P_0, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_1, lander->top_left.y + P_0, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_2, lander->top_left.y + P_0, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_3, lander->top_left.y + P_0, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_4, lander->top_left.y + P_0, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_6, lander->top_left.y + P_0, LANDER_BLACK);
+    //Line 2
+    display_drawPixel(lander->top_left.x - P_1, lander->top_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_0, lander->top_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_1, lander->top_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_2, lander->top_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_3, lander->top_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_4, lander->top_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_5, lander->top_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_6, lander->top_left.y + P_1, LANDER_BLACK);
+    //Line 3
+    display_drawPixel(lander->top_left.x - P_1, lander->top_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_0, lander->top_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_1, lander->top_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_2, lander->top_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_3, lander->top_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_4, lander->top_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_5, lander->top_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_6, lander->top_left.y + P_2, LANDER_BLACK);
+    //Line 4
+    display_drawPixel(lander->top_left.x - P_2, lander->top_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_1, lander->top_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_0, lander->top_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_1, lander->top_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_2, lander->top_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_3, lander->top_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_4, lander->top_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_5, lander->top_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_6, lander->top_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_7, lander->top_left.y + P_3, LANDER_BLACK);
+    //Line 5
+    display_drawPixel(lander->top_left.x - P_2, lander->top_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_1, lander->top_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_0, lander->top_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_1, lander->top_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_2, lander->top_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_3, lander->top_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_4, lander->top_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_5, lander->top_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_6, lander->top_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_7, lander->top_left.y + P_4, LANDER_BLACK);
+    //Line 6
+    display_drawPixel(lander->top_left.x - P_2, lander->top_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_1, lander->top_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_0, lander->top_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_1, lander->top_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_2, lander->top_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_3, lander->top_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_4, lander->top_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_5, lander->top_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_6, lander->top_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_7, lander->top_left.y + P_5, LANDER_BLACK);
+    //Line 7
+    display_drawPixel(lander->top_left.x - P_2, lander->top_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_1, lander->top_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_0, lander->top_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_1, lander->top_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_2, lander->top_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_3, lander->top_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_4, lander->top_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_5, lander->top_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_6, lander->top_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_7, lander->top_left.y + P_6, LANDER_BLACK);
+    //Line 8
+    display_drawPixel(lander->top_left.x - P_2, lander->top_left.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_1, lander->top_left.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_6, lander->top_left.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_7, lander->top_left.y + P_7, LANDER_BLACK);
   }
 
   //Draw
@@ -633,17 +1100,106 @@ void draw_lander_pos_1(struct lander_t *lander, bool erase) {
 
   //Erase
   if (erase) {
-    display_drawFastHLine(lander->top_left.x - P_1, lander->top_left.y + P_0, P_4,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x - P_2, lander->top_left.y + P_1, P_7,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x - P_2, lander->top_left.y + P_2, P_9,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x - P_2, lander->top_left.y + P_3, P_9,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x - P_3, lander->top_left.y + P_4, P_10, LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x - P_3, lander->top_left.y + P_5, P_10, LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x - P_4, lander->top_left.y + P_6, P_11, LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x + P_1, lander->top_left.y + P_7, P_6,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x - P_3, lander->top_left.y + P_7, P_1,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x + P_4, lander->top_left.y + P_8, P_2,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x + P_4, lander->top_left.y + P_9, P_1,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x - P_1, lander->top_left.y + P_0, P_4,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x - P_2, lander->top_left.y + P_1, P_7,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x - P_2, lander->top_left.y + P_2, P_9,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x - P_2, lander->top_left.y + P_3, P_9,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x - P_3, lander->top_left.y + P_4, P_10, LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x - P_3, lander->top_left.y + P_5, P_10, LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x - P_4, lander->top_left.y + P_6, P_11, LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x + P_1, lander->top_left.y + P_7, P_6,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x - P_3, lander->top_left.y + P_7, P_1,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x + P_4, lander->top_left.y + P_8, P_2,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x + P_4, lander->top_left.y + P_9, P_1,  LANDER_BLACK);
+
+  //Draw critical points
+    display_drawPixel(lander->top_left.x, lander->top_left.y, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x, lander->top_right.y, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x, lander->bottom_right.y, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x, lander->bottom_left.y, LANDER_BLACK);
+
+    //Draw everything else
+
+    //Line 1
+    display_drawPixel(lander->top_left.x - P_1, lander->top_left.y + P_0, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_1, lander->top_left.y + P_0, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_2, lander->top_left.y + P_0, LANDER_BLACK);
+    //Line 2
+    display_drawPixel(lander->top_left.x - P_2, lander->top_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_1, lander->top_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_0, lander->top_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_1, lander->top_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_2, lander->top_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_3, lander->top_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_4, lander->top_left.y + P_1, LANDER_BLACK);
+    //Line 3
+    display_drawPixel(lander->top_left.x - P_2, lander->top_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_1, lander->top_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_0, lander->top_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_1, lander->top_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_2, lander->top_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_3, lander->top_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_4, lander->top_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_6, lander->top_left.y + P_2, LANDER_BLACK);
+    //Line 4
+    display_drawPixel(lander->top_left.x - P_2, lander->top_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_1, lander->top_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_0, lander->top_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_1, lander->top_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_2, lander->top_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_3, lander->top_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_4, lander->top_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_5, lander->top_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_6, lander->top_left.y + P_3, LANDER_BLACK);
+    //Line 5
+    display_drawPixel(lander->top_left.x - P_3, lander->top_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_2, lander->top_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_1, lander->top_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_0, lander->top_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_1, lander->top_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_2, lander->top_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_3, lander->top_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_4, lander->top_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_5, lander->top_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_6, lander->top_left.y + P_4, LANDER_BLACK);
+    //Line 6
+    display_drawPixel(lander->top_left.x - P_3, lander->top_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_2, lander->top_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_1, lander->top_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_0, lander->top_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_1, lander->top_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_2, lander->top_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_3, lander->top_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_4, lander->top_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_5, lander->top_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_6, lander->top_left.y + P_5, LANDER_BLACK);
+    //Line 7
+    display_drawPixel(lander->top_left.x - P_4, lander->top_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_3, lander->top_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_2, lander->top_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_1, lander->top_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_0, lander->top_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_1, lander->top_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_2, lander->top_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_3, lander->top_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_4, lander->top_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_5, lander->top_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_6, lander->top_left.y + P_6, LANDER_BLACK);
+    //Line 8
+    display_drawPixel(lander->top_left.x - P_3, lander->top_left.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_1, lander->top_left.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_2, lander->top_left.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_3, lander->top_left.y + P_7, LANDER_BLACK);    
+    display_drawPixel(lander->top_left.x + P_4, lander->top_left.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_5, lander->top_left.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_6, lander->top_left.y + P_7, LANDER_BLACK);
+    //Line 9
+    display_drawPixel(lander->top_left.x + P_4, lander->top_left.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_5, lander->top_left.y + P_8, LANDER_BLACK);
+    //Line 10
+    display_drawPixel(lander->top_left.x + P_4, lander->top_left.y + P_9, LANDER_BLACK);
+
+
   }
 
   //Draw
@@ -741,18 +1297,113 @@ void draw_lander_pos_2(struct lander_t *lander, bool erase) {
 
   //Erase
   if (erase) {
-    display_drawFastHLine(lander->top_left.x - P_1, lander->top_left.y + P_0, P_3,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x - P_3, lander->top_left.y + P_1, P_6,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x - P_4, lander->top_left.y + P_2, P_8,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x - P_6, lander->top_left.y + P_3, P_10, LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x - P_7, lander->top_left.y + P_4, P_12, LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x - P_7, lander->top_left.y + P_5, P_12, LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x - P_3, lander->top_left.y + P_6, P_8,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x - P_2, lander->top_left.y + P_7, P_6,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x - P_2, lander->top_left.y + P_8, P_5,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x - P_2, lander->top_left.y + P_9, P_4,  LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x - P_1, lander->top_left.y + P_10, P_2, LANDER_BLACK);
-    display_drawFastHLine(lander->top_left.x - P_1, lander->top_left.y + P_11, P_1, LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x - P_1, lander->top_left.y + P_0, P_3,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x - P_3, lander->top_left.y + P_1, P_6,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x - P_4, lander->top_left.y + P_2, P_8,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x - P_6, lander->top_left.y + P_3, P_10, LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x - P_7, lander->top_left.y + P_4, P_12, LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x - P_7, lander->top_left.y + P_5, P_12, LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x - P_3, lander->top_left.y + P_6, P_8,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x - P_2, lander->top_left.y + P_7, P_6,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x - P_2, lander->top_left.y + P_8, P_5,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x - P_2, lander->top_left.y + P_9, P_4,  LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x - P_1, lander->top_left.y + P_10, P_2, LANDER_BLACK);
+    // display_drawFastHLine(lander->top_left.x - P_1, lander->top_left.y + P_11, P_1, LANDER_BLACK);
+
+    //Draw critical points
+    display_drawPixel(lander->top_left.x, lander->top_left.y, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x, lander->top_right.y, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x, lander->bottom_right.y, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x, lander->bottom_left.y, LANDER_BLACK);
+
+    //Draw everything else
+
+    //Line 1
+    display_drawPixel(lander->top_left.x - P_1, lander->top_left.y + P_0, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_1, lander->top_left.y + P_0, LANDER_BLACK);
+    //Line 2
+    display_drawPixel(lander->top_left.x - P_3, lander->top_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_2, lander->top_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_1, lander->top_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_0, lander->top_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_1, lander->top_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_2, lander->top_left.y + P_1, LANDER_BLACK);
+    //Line 3
+    display_drawPixel(lander->top_left.x - P_4, lander->top_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_3, lander->top_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_2, lander->top_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_1, lander->top_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_0, lander->top_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_1, lander->top_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_2, lander->top_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_3, lander->top_left.y + P_2, LANDER_BLACK);
+    //Line 4
+    display_drawPixel(lander->top_left.x - P_6, lander->top_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_5, lander->top_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_4, lander->top_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_3, lander->top_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_2, lander->top_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_1, lander->top_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_0, lander->top_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_1, lander->top_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_2, lander->top_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_3, lander->top_left.y + P_3, LANDER_BLACK);
+    //Line 5
+    display_drawPixel(lander->top_left.x - P_7, lander->top_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_6, lander->top_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_5, lander->top_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_4, lander->top_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_3, lander->top_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_2, lander->top_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_1, lander->top_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_0, lander->top_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_1, lander->top_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_2, lander->top_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_3, lander->top_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_4, lander->top_left.y + P_4, LANDER_BLACK);    
+    //Line 6
+    display_drawPixel(lander->top_left.x - P_6, lander->top_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_5, lander->top_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_4, lander->top_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_3, lander->top_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_2, lander->top_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_1, lander->top_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_0, lander->top_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_1, lander->top_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_2, lander->top_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_3, lander->top_left.y + P_5, LANDER_BLACK);
+    //Line 7
+    display_drawPixel(lander->top_left.x - P_3, lander->top_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_2, lander->top_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_1, lander->top_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_0, lander->top_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_1, lander->top_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_2, lander->top_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_3, lander->top_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_4, lander->top_left.y + P_6, LANDER_BLACK);
+    //Line 8
+    display_drawPixel(lander->top_left.x - P_2, lander->top_left.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_1, lander->top_left.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_0, lander->top_left.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_1, lander->top_left.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_2, lander->top_left.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_3, lander->top_left.y + P_7, LANDER_BLACK);
+    //Line 9
+    display_drawPixel(lander->top_left.x - P_2, lander->top_left.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_1, lander->top_left.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_0, lander->top_left.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_1, lander->top_left.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_2, lander->top_left.y + P_8, LANDER_BLACK);
+    //Line 10
+    display_drawPixel(lander->top_left.x - P_2, lander->top_left.y + P_9, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_1, lander->top_left.y + P_9, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_0, lander->top_left.y + P_9, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x + P_1, lander->top_left.y + P_9, LANDER_BLACK);
+    //Line 11
+    display_drawPixel(lander->top_left.x - P_1, lander->top_left.y + P_10, LANDER_BLACK);
+    display_drawPixel(lander->top_left.x - P_0, lander->top_left.y + P_10, LANDER_BLACK);
+
+
   }
 
   //Draw
@@ -855,17 +1506,107 @@ void draw_lander_pos_2(struct lander_t *lander, bool erase) {
 void draw_lander_pos_3(struct lander_t *lander, bool erase) {
   //Erase
   if (erase) {
-    display_drawFastHLine(lander->bottom_left.x + P_2, lander->bottom_left.y - P_1, P_6, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_left.x + P_0, lander->bottom_left.y + P_0, P_7, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_left.x + P_0, lander->bottom_left.y + P_1, P_8, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_left.x + P_2, lander->bottom_left.y + P_2, P_7, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_left.x + P_2, lander->bottom_left.y + P_3, P_8, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_left.x + P_2, lander->bottom_left.y + P_4, P_8, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_left.x + P_3, lander->bottom_left.y + P_5, P_7, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_left.x + P_3, lander->bottom_left.y + P_6, P_7, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_left.x + P_3, lander->bottom_left.y + P_7, P_6, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_left.x + P_2, lander->bottom_left.y + P_8, P_4, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_left.x + P_2, lander->bottom_left.y + P_9, P_3, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_left.x + P_2, lander->bottom_left.y - P_1, P_6, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_left.x + P_0, lander->bottom_left.y + P_0, P_7, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_left.x + P_0, lander->bottom_left.y + P_1, P_8, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_left.x + P_2, lander->bottom_left.y + P_2, P_7, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_left.x + P_2, lander->bottom_left.y + P_3, P_8, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_left.x + P_2, lander->bottom_left.y + P_4, P_8, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_left.x + P_3, lander->bottom_left.y + P_5, P_7, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_left.x + P_3, lander->bottom_left.y + P_6, P_7, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_left.x + P_3, lander->bottom_left.y + P_7, P_6, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_left.x + P_2, lander->bottom_left.y + P_8, P_4, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_left.x + P_2, lander->bottom_left.y + P_9, P_3, LANDER_BLACK);
+
+
+    //Draw critical points
+    display_drawPixel(lander->top_left.x, lander->top_left.y, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x, lander->top_right.y, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x, lander->bottom_right.y, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x, lander->bottom_left.y, LANDER_BLACK);
+
+    //Draw everything else
+
+    //Line 1
+    display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y - P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y - P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y - P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_5, lander->bottom_left.y - P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_6, lander->bottom_left.y - P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_7, lander->bottom_left.y - P_1, LANDER_BLACK);
+    //Line 2
+    display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_0, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_0, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_0, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_0, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_5, lander->bottom_left.y + P_0, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_6, lander->bottom_left.y + P_0, LANDER_BLACK);
+    //Line 3
+    display_drawPixel(lander->bottom_left.x + P_0, lander->bottom_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_5, lander->bottom_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_6, lander->bottom_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_7, lander->bottom_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_9, lander->bottom_left.y + P_1, LANDER_BLACK);
+    //Line 4
+    display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_5, lander->bottom_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_6, lander->bottom_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_7, lander->bottom_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_8, lander->bottom_left.y + P_2, LANDER_BLACK);
+    //Line 5
+    display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_5, lander->bottom_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_6, lander->bottom_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_7, lander->bottom_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_8, lander->bottom_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_9, lander->bottom_left.y + P_3, LANDER_BLACK);
+    //Line 6
+    display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_5, lander->bottom_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_6, lander->bottom_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_7, lander->bottom_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_8, lander->bottom_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_9, lander->bottom_left.y + P_4, LANDER_BLACK);
+    //Line 7
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_5, lander->bottom_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_6, lander->bottom_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_7, lander->bottom_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_8, lander->bottom_left.y + P_5, LANDER_BLACK);
+    //Line 8
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_5, lander->bottom_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_6, lander->bottom_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_7, lander->bottom_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_8, lander->bottom_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_9, lander->bottom_left.y + P_6, LANDER_BLACK);
+    //Line 9
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_5, lander->bottom_left.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_6, lander->bottom_left.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_7, lander->bottom_left.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_8, lander->bottom_left.y + P_7, LANDER_BLACK);
+    //Line 10
+    display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_5, lander->bottom_left.y + P_8, LANDER_BLACK);
+    //Line 11
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_9, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_9, LANDER_BLACK);
   }
 
   //Draw
@@ -965,16 +1706,112 @@ void draw_lander_pos_4(struct lander_t *lander, bool erase) {
 
   //Erase
   if (erase) {
-    display_drawFastHLine(lander->bottom_left.x + P_0, lander->bottom_left.y + P_0,  P_7, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_left.x + P_1, lander->bottom_left.y + P_1,  P_8, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_left.x + P_2, lander->bottom_left.y + P_2,  P_8, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_left.x + P_2, lander->bottom_left.y + P_3,  P_8, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_left.x + P_2, lander->bottom_left.y + P_4,  P_8, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_left.x + P_2, lander->bottom_left.y + P_5,  P_8, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_left.x + P_2, lander->bottom_left.y + P_6,  P_8, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_left.x + P_2, lander->bottom_left.y + P_7,  P_8, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_left.x + P_1, lander->bottom_left.y + P_8,  P_8, LANDER_BLACK);
-    display_drawFastHLine(lander->bottom_left.x + P_0, lander->bottom_left.y + P_10, P_7, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_left.x + P_0, lander->bottom_left.y + P_0,  P_7, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_left.x + P_1, lander->bottom_left.y + P_1,  P_8, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_left.x + P_2, lander->bottom_left.y + P_2,  P_8, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_left.x + P_2, lander->bottom_left.y + P_3,  P_8, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_left.x + P_2, lander->bottom_left.y + P_4,  P_8, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_left.x + P_2, lander->bottom_left.y + P_5,  P_8, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_left.x + P_2, lander->bottom_left.y + P_6,  P_8, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_left.x + P_2, lander->bottom_left.y + P_7,  P_8, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_left.x + P_1, lander->bottom_left.y + P_8,  P_8, LANDER_BLACK);
+    // display_drawFastHLine(lander->bottom_left.x + P_0, lander->bottom_left.y + P_10, P_7, LANDER_BLACK);
+
+    //Draw critical points
+    display_drawPixel(lander->top_left.x, lander->top_left.y, LANDER_BLACK);
+    display_drawPixel(lander->top_right.x, lander->top_right.y, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x, lander->bottom_right.y, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x, lander->bottom_left.y, LANDER_BLACK);
+
+    //Draw everything else
+
+    //Line 1
+    display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_5, lander->bottom_left.y, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_6, lander->bottom_left.y, LANDER_BLACK);
+    //Line 2
+    display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_5, lander->bottom_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_6, lander->bottom_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_7, lander->bottom_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_8, lander->bottom_left.y + P_1, LANDER_BLACK);
+    //Line 3
+    display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_5, lander->bottom_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_6, lander->bottom_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_7, lander->bottom_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_9, lander->bottom_left.y + P_2, LANDER_BLACK);
+    //Line 4
+    display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_5, lander->bottom_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_6, lander->bottom_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_7, lander->bottom_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_8, lander->bottom_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_9, lander->bottom_left.y + P_3, LANDER_BLACK);
+    //Line 5
+    display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_5, lander->bottom_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_6, lander->bottom_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_7, lander->bottom_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_8, lander->bottom_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_9, lander->bottom_left.y + P_4, LANDER_BLACK);
+    //Line 6
+    display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_5, lander->bottom_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_6, lander->bottom_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_7, lander->bottom_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_8, lander->bottom_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_9, lander->bottom_left.y + P_5, LANDER_BLACK);
+    //Line 7
+    display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_5, lander->bottom_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_6, lander->bottom_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_7, lander->bottom_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_8, lander->bottom_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_9, lander->bottom_left.y + P_6, LANDER_BLACK);
+    //Line 8
+    display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_5, lander->bottom_left.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_6, lander->bottom_left.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_7, lander->bottom_left.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_9, lander->bottom_left.y + P_7, LANDER_BLACK);
+    //Line 9
+    display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_5, lander->bottom_left.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_6, lander->bottom_left.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_7, lander->bottom_left.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_8, lander->bottom_left.y + P_8, LANDER_BLACK);
+    //Line 10
+    display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_9, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_9, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_9, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_9, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_5, lander->bottom_left.y + P_9, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_6, lander->bottom_left.y + P_9, LANDER_DARK_GRAY);
+
+
+
   }
 
   //Draw
@@ -1409,6 +2246,7 @@ int8_t get_position(struct lander_t *lander) {
 
 //Top level draw function. Draw the lander at the current position.
 void draw_lander(struct lander_t *lander) {
+  button_value = buttons_read();
 
   //Helper variable to switch between erasing and drawing
   bool erase = true;
@@ -1485,6 +2323,134 @@ void draw_lander(struct lander_t *lander) {
     }
   }
 
+
+  //draw the lander before
+  if ((third_tick % 4 < 1) && (lander->velocity_y < 0.35) &&
+            (lander->velocity_y > 0.1)) { // if tick_is_odd and the velocity falls in
+                                  // the correct range, then add to lander->velocity_y
+          lander->top_left.y = lander->top_left.y + 1;
+          lander->top_right.y = lander->top_right.y + 1;
+          lander->bottom_right.y = lander->bottom_right.y + 1;
+          lander->bottom_left.y = lander->bottom_left.y + 1;
+          lander->top_left.x = lander->top_left.x + (int)lander->velocity_x;
+          lander->top_right.x = lander->top_right.x + (int)lander->velocity_x;
+          lander->bottom_right.x =
+              lander->bottom_right.x + (int)lander->velocity_x;
+          lander->bottom_left.x = lander->bottom_left.x + (int)lander->velocity_x;
+
+        } else if ((third_tick % 4 < 2) && (lander->velocity_y < 0.7) &&
+                   (lander->velocity_y > 0.351)) {
+          lander->top_left.y = lander->top_left.y + 1;
+          lander->top_right.y = lander->top_right.y + 1;
+          lander->bottom_right.y = lander->bottom_right.y + 1;
+          lander->bottom_left.y = lander->bottom_left.y + 1;
+          lander->top_left.x = lander->top_left.x + (int)lander->velocity_x;
+          lander->top_right.x = lander->top_right.x + (int)lander->velocity_x;
+          lander->bottom_right.x =
+              lander->bottom_right.x + (int)lander->velocity_x;
+          lander->bottom_left.x = lander->bottom_left.x + (int)lander->velocity_x;
+        } else if ((third_tick % 4 < 3) && (lander->velocity_y < 1) &&
+                   (lander->velocity_y > 0.71)) {
+          lander->top_left.y = lander->top_left.y + 1;
+          lander->top_right.y = lander->top_right.y + 1;
+          lander->bottom_right.y = lander->bottom_right.y + 1;
+          lander->bottom_left.y = lander->bottom_left.y + 1;
+          lander->top_left.x = lander->top_left.x + (int)lander->velocity_x;
+          lander->top_right.x = lander->top_right.x + (int)lander->velocity_x;
+          lander->bottom_right.x =
+              lander->bottom_right.x + (int)lander->velocity_x;
+          lander->bottom_left.x = lander->bottom_left.x + (int)lander->velocity_x;
+
+        } else if ((third_tick % 4 < 1) && (lander->velocity_y > -0.35) &&
+                   (lander->velocity_y <
+                    -0.1)) { // if tick_is_odd and the velocity falls in the
+                             // correct range, then add to lander->velocity_y
+          lander->top_left.y = lander->top_left.y - 1;
+          lander->top_right.y = lander->top_right.y - 1;
+          lander->bottom_right.y = lander->bottom_right.y - 1;
+          lander->bottom_left.y = lander->bottom_left.y - 1;
+          lander->top_left.x = lander->top_left.x + (int)lander->velocity_x;
+          lander->top_right.x = lander->top_right.x + (int)lander->velocity_x;
+          lander->bottom_right.x =
+              lander->bottom_right.x + (int)lander->velocity_x;
+          lander->bottom_left.x = lander->bottom_left.x + (int)lander->velocity_x;
+
+        } else if ((third_tick % 4 < 2) && (lander->velocity_y > -0.7) &&
+                   (lander->velocity_y < -0.351)) {
+          lander->top_left.y = lander->top_left.y - 1;
+          lander->top_right.y = lander->top_right.y - 1;
+          lander->bottom_right.y = lander->bottom_right.y - 1;
+          lander->bottom_left.y = lander->bottom_left.y - 1;
+          lander->top_left.x = lander->top_left.x + (int)lander->velocity_x;
+          lander->top_right.x = lander->top_right.x + (int)lander->velocity_x;
+          lander->bottom_right.x =
+              lander->bottom_right.x + (int)lander->velocity_x;
+          lander->bottom_left.x = lander->bottom_left.x + (int)lander->velocity_x;
+
+        } else if ((third_tick % 4 < 3) && (lander->velocity_y > -1) &&
+                   (lander->velocity_y < -0.71)) {
+          lander->top_left.y = lander->top_left.y - 1;
+          lander->top_right.y = lander->top_right.y - 1;
+          lander->bottom_right.y = lander->bottom_right.y - 1;
+          lander->bottom_left.y = lander->bottom_left.y - 1;
+          lander->top_left.x = lander->top_left.x + (int)lander->velocity_x;
+          lander->top_right.x = lander->top_right.x + (int)lander->velocity_x;
+          lander->bottom_right.x =
+              lander->bottom_right.x + (int)lander->velocity_x;
+          lander->bottom_left.x = lander->bottom_left.x + (int)lander->velocity_x;
+
+        } else {
+          lander->top_left.y = lander->top_left.y + (int)lander->velocity_y;
+          lander->top_right.y = lander->top_right.y + (int)lander->velocity_y;
+          lander->bottom_right.y =
+              lander->bottom_right.y + (int)lander->velocity_y;
+          lander->bottom_left.y = lander->bottom_left.y + (int)lander->velocity_y;
+          lander->top_left.x = lander->top_left.x + (int)lander->velocity_x;
+          lander->top_right.x = lander->top_right.x + (int)lander->velocity_x;
+          lander->bottom_right.x =
+              lander->bottom_right.x + (int)lander->velocity_x;
+          lander->bottom_left.x = lander->bottom_left.x + (int)lander->velocity_x;
+        }
+
+        // incrementing by 0.5 for  the x_velcoty
+        if (tick_is_odd && (lander->velocity_x < 1) &&
+            (lander->velocity_x > 0.2)) { // if tick_is_odd and the velocity falls in
+                                  // the correct range, then add to lander->velocity_y
+          lander->top_left.y = lander->top_left.y + (int)lander->velocity_y;
+          lander->top_right.y = lander->top_right.y + (int)lander->velocity_y;
+          lander->bottom_right.y =
+              lander->bottom_right.y + (int)lander->velocity_y;
+          lander->bottom_left.y = lander->bottom_left.y + (int)lander->velocity_y;
+          lander->top_left.x = lander->top_left.x + 1;
+          lander->top_right.x = lander->top_right.x + 1;
+          lander->bottom_right.x = lander->bottom_right.x + 1;
+          lander->bottom_left.x = lander->bottom_left.x + 1;
+
+        } else if (tick_is_odd && (lander->velocity_x > -1) && (lander->velocity_x < -0.2)) {
+          lander->top_left.y = lander->top_left.y + (int)lander->velocity_y;
+          lander->top_right.y = lander->top_right.y + (int)lander->velocity_y;
+          lander->bottom_right.y =
+              lander->bottom_right.y + (int)lander->velocity_y;
+          lander->bottom_left.y = lander->bottom_left.y + (int)lander->velocity_y;
+          lander->top_left.x = lander->top_left.x - 1;
+          lander->top_right.x = lander->top_right.x - 1;
+          lander->bottom_right.x = lander->bottom_right.x - 1;
+          lander->bottom_left.x = lander->bottom_left.x - 1;
+
+        } else {
+          lander->top_left.y = lander->top_left.y + (int)lander->velocity_y;
+          lander->top_right.y = lander->top_right.y + (int)lander->velocity_y;
+          lander->bottom_right.y =
+              lander->bottom_right.y + (int)lander->velocity_y;
+          lander->bottom_left.y = lander->bottom_left.y + (int)lander->velocity_y;
+          lander->top_left.x = lander->top_left.x + (int)lander->velocity_x;
+          lander->top_right.x = lander->top_right.x + (int)lander->velocity_x;
+          lander->bottom_right.x =
+              lander->bottom_right.x + (int)lander->velocity_x;
+          lander->bottom_left.x = lander->bottom_left.x + (int)lander->velocity_x;
+        }  
+
+
   //Set position
   set_position(lander);
   erase = false;
@@ -1559,5 +2525,20 @@ void draw_lander(struct lander_t *lander) {
       draw_lander_pos_4(lander, erase);
     }
   }
+
+  lander->velocity_y = lander->velocity_y + gravity - (THRUST_SCALER * lander->thrust_y);
+  lander->velocity_x = lander->velocity_x + (THRUST_SCALER * lander->thrust_x);
+
+  if (((button_value & BUTTONS_BTN1_MASK) == BUTTONS_BTN1_MASK) &&
+        lander->fuel > 0) {
+      lander->thrust_x = get_thrust_x(lander);
+      lander->thrust_y = get_thrust_y(lander);
+    } else {
+      lander->thrust_x = 0;
+      lander->thrust_y = 0;
+    }
+
+  third_tick++;
+  tick_is_odd = !tick_is_odd;
 }
 
