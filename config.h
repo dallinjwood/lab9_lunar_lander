@@ -1,6 +1,10 @@
 #ifndef CONFIG
 #define CONFIG
 
+#define gravity 0.02
+#define THRUST_SCALER 0.1
+
+
 //TODO:: change these for our game to be slower these were copy pasted from the missiile command congif.h
 #define CONFIG_TOUCHSCREEN_TIMER_PERIOD 10.0E-3
 #define CONFIG_GAME_TIMER_PERIOD 45.0E-3

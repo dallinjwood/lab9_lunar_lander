@@ -8,8 +8,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#define THRUST_SCALER 0.1
-#define gravity 0.02
+
 #define FUEL_TEXT_CURSOR_X 30
 #define FUEL_TEXT_CURSOR_Y 20
 #define FUEL_TEXT "Fuel: "
@@ -27,14 +26,6 @@ static bool lastDrawLeft = false;
 static bool lastDrawRight = false;
 static bool lastDrawTop = false;
 static double triangle_scalar = 1;
-static double x0 = 320;
-static double y_point0 = 0;
-static double x1 = 330;
-static double y_point1 = 0;
-static double x2 = 330;
-static double y2 = 10;
-static double x3 = 320;
-static double y3 = 10;
 static int16_t level = 1;
 static double y_velocity = 0.9;
 static double x_velocity = -1;
@@ -67,21 +58,23 @@ static uint16_t transition_cnt = 0;
 static uint16_t transition_num_ticks = 0;
 static uint8_t button_value = 0;
 
-//TEST DRAWING LANDER TODO
-struct lander_t other_lander;
 
-void gameControl_init_next_level() {
-  x0 = 320;
-  y_point0 = 0;
-  x1 = 330;
-  y_point1 = 0;
-  x2 = 330;
-  y2 = 10;
-  x3 = 320;
-  y3 = 10;
-  y_velocity = 0.9;
-  x_velocity = -1;
-}
+// void gameControl_init_next_level() {
+//   // the_lander.top_left.x = 320;
+//   // the_lander.top_left.y = 0;
+//   // the_lander.top_right.x = 330;
+//   // the_lander.top_right.y = 0;
+//   // the_lander.bottom_right.x = 330;
+//   // the_lander.bottom_right.y = 10;
+//   // the_lander.bottom_left.x = 320;
+//   // the_lander.bottom_left.y = 10;
+//   // the_lander.velocity_y = 0.9;
+//   // the_lander.velocity_x = -1;
+//   // the_lander.thrust_x = 0;
+//   // the_lander.thrust_y = 0;
+
+
+// }
 
 // Initialize the game control logic
 // This function will initialize the lander and the map.
@@ -156,7 +149,7 @@ void gameControl_tick() {
         display_setTextColor(DISPLAY_BLACK);
         display_println("Level 2");
         announcement_drawn = false;
-        gameControl_init_next_level();
+        lander_init(&the_lander);
         map2();
       } else if ((level == 3) && (announcement_drawn)) {
         // erase level announcement
@@ -165,15 +158,24 @@ void gameControl_tick() {
         display_setTextColor(DISPLAY_BLACK);
         display_println("Level 3");
         announcement_drawn = false;
-        gameControl_init_next_level();
+        lander_init(&the_lander);
         map3();
       }
       lander_init(&the_lander);
-      display_drawLine(x0, y_point0, x1, y_point1, DISPLAY_GREEN);
-      display_drawLine(x1, y_point1, x2, y2, DISPLAY_CYAN);
-      display_drawLine(x2, y2, x3, y3, DISPLAY_CYAN);
-      display_drawLine(x3, y3, x0, y_point0, DISPLAY_CYAN);
-      display_drawPixel(x0, y_point0, DISPLAY_DARK_GREEN);
+      display_drawLine(the_lander.top_left.x, the_lander.top_left.y,
+                       the_lander.top_right.x, the_lander.top_right.y,
+                       DISPLAY_GREEN);
+      display_drawLine(the_lander.top_right.x, the_lander.top_right.y,
+                       the_lander.bottom_right.x, the_lander.bottom_right.y,
+                       DISPLAY_CYAN);
+      display_drawLine(the_lander.bottom_right.x, the_lander.bottom_right.y,
+                       the_lander.bottom_left.x, the_lander.bottom_left.y,
+                       DISPLAY_CYAN);
+      display_drawLine(the_lander.bottom_left.x, the_lander.bottom_left.y,
+                       the_lander.top_left.x, the_lander.top_left.y,
+                       DISPLAY_CYAN);
+      display_drawPixel(the_lander.top_left.x, the_lander.top_left.y,
+                        DISPLAY_DARK_GREEN);
     }
     break;
   // INC_DEC transitions
@@ -220,7 +222,7 @@ void gameControl_tick() {
       display_println("restart");
       gameover_drawn = false;
       level = 1;
-      gameControl_init_next_level();
+      lander_init(&the_lander);
 
       // draw menu
       display_setCursor(SET_X_CURSOR + 50, SET_Y_CURSOR);
@@ -283,9 +285,9 @@ void gameControl_tick() {
 
     // printf("vertical thrust: %f\n",get_thrust_y(&the_lander));
     // printf("horizontal thrust: %f\n\n",get_thrust_x(&the_lander));
-    printf("vertical velocity: %f\n", y_velocity);
+    printf("vertical velocity: %f\n", the_lander.velocity_y);
     printf("Theta: %f\n", the_lander.angle);
-    printf("horizontal velocity: %f\n\n", x_velocity);
+    printf("horizontal velocity: %f\n\n", the_lander.velocity_x);
     printf("NOT DEAD\n");
 
     // fuel text cursor
@@ -301,24 +303,26 @@ void gameControl_tick() {
 
     // change fuel text color based in how much fuel is left
     if (the_lander.fuel > 500) {
-      display_drawRoundRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y + 10, the_lander.fuel / 10, 10, 2, DISPLAY_WHITE);
+      display_drawRoundRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y + 10,
+                            the_lander.fuel / 10, 10, 2, DISPLAY_WHITE);
       display_fillRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y, 30, 10,
                        DISPLAY_BLACK);
       display_printDecimalInt(the_lander.fuel);
     } else if (the_lander.fuel > 300 && the_lander.fuel <= 500) {
-      display_drawRoundRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y + 10, the_lander.fuel / 10, 10, 2, DISPLAY_YELLOW);
+      display_drawRoundRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y + 10,
+                            the_lander.fuel / 10, 10, 2, DISPLAY_YELLOW);
       display_setTextColor(DISPLAY_YELLOW);
       display_fillRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y, 30, 10,
                        DISPLAY_BLACK);
       display_printDecimalInt(the_lander.fuel);
 
     } else if (the_lander.fuel >= 0 && the_lander.fuel <= 300) {
-      display_drawRoundRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y + 10, the_lander.fuel / 10, 10, 2, DISPLAY_RED);
+      display_drawRoundRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y + 10,
+                            the_lander.fuel / 10, 10, 2, DISPLAY_RED);
       display_setTextColor(DISPLAY_RED);
       display_fillRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y, 30, 10,
                        DISPLAY_BLACK);
       display_printDecimalInt(the_lander.fuel);
-
     }
 
     printf("Fuel: %d \n", the_lander.fuel);
@@ -333,328 +337,367 @@ void gameControl_tick() {
     }
 
     // testing rotations given preset rotation values
-    if (y_point0 <= 240) {
+    if (the_lander.top_left.y <= 240) {
       if (!gameover_control) {
         // erasing the box
-        display_drawLine(x0, y_point0, x1, y_point1, DISPLAY_BLACK);
-        display_drawLine(x1, y_point1, x2, y2, DISPLAY_BLACK);
-        display_drawLine(x2, y2, x3, y3, DISPLAY_BLACK);
-        display_drawLine(x3, y3, x0, y_point0, DISPLAY_BLACK);
-        display_drawPixel(x0, y_point0, DISPLAY_BLACK);
+        // display_drawLine(the_lander.top_left.x, the_lander.top_left.y,
+        //                  the_lander.top_right.x, the_lander.top_right.y,
+        //                  DISPLAY_BLACK);
+        // display_drawLine(the_lander.top_right.x, the_lander.top_right.y,
+        //                  the_lander.bottom_right.x,
+        //                  the_lander.bottom_right.y, DISPLAY_BLACK);
+        // display_drawLine(the_lander.bottom_right.x,
+        // the_lander.bottom_right.y,
+        //                  the_lander.bottom_left.x, the_lander.bottom_left.y,
+        //                  DISPLAY_BLACK);
+        // display_drawLine(the_lander.bottom_left.x, the_lander.bottom_left.y,
+        //                  the_lander.top_left.x, the_lander.top_left.y,
+        //                  DISPLAY_BLACK);
+        // display_drawPixel(the_lander.top_left.x, the_lander.top_left.y,
+        //                   DISPLAY_BLACK);
+        draw_lander(&the_lander);
 
         // Testing the idea of incrementing every other tick to solve the  stand
         // still issue
-        if ((third_tick % 4 < 1) && (y_velocity < 0.35) &&
-            (y_velocity > 0.1)) { // if tick_is_odd and the velocity falls in
-                                  // the correct range, then add to y_velocity
-          y_point0 = y_point0 + 1;
-          y_point1 = y_point1 + 1;
-          y2 = y2 + 1;
-          y3 = y3 + 1;
-          x0 = x0 + (int)x_velocity;
-          x1 = x1 + (int)x_velocity;
-          x2 = x2 + (int)x_velocity;
-          x3 = x3 + (int)x_velocity;
+        // if ((third_tick % 4 < 1) && (y_velocity < 0.35) &&
+        //     (y_velocity > 0.1)) { // if tick_is_odd and the velocity falls in
+        //                           // the correct range, then add to y_velocity
+        //   the_lander.top_left.y = the_lander.top_left.y + 1;
+        //   the_lander.top_right.y = the_lander.top_right.y + 1;
+        //   the_lander.bottom_right.y = the_lander.bottom_right.y + 1;
+        //   the_lander.bottom_left.y = the_lander.bottom_left.y + 1;
+        //   the_lander.top_left.x = the_lander.top_left.x + (int)x_velocity;
+        //   the_lander.top_right.x = the_lander.top_right.x + (int)x_velocity;
+        //   the_lander.bottom_right.x =
+        //       the_lander.bottom_right.x + (int)x_velocity;
+        //   the_lander.bottom_left.x = the_lander.bottom_left.x + (int)x_velocity;
 
-        } else if ((third_tick % 4 < 2) && (y_velocity < 0.7) &&
-                   (y_velocity > 0.351)) {
-          y_point0 = y_point0 + 1;
-          y_point1 = y_point1 + 1;
-          y2 = y2 + 1;
-          y3 = y3 + 1;
-          x0 = x0 + (int)x_velocity;
-          x1 = x1 + (int)x_velocity;
-          x2 = x2 + (int)x_velocity;
-          x3 = x3 + (int)x_velocity;
-        } else if ((third_tick % 4 < 3) && (y_velocity < 1) &&
-                   (y_velocity > 0.71)) {
-          y_point0 = y_point0 + 1;
-          y_point1 = y_point1 + 1;
-          y2 = y2 + 1;
-          y3 = y3 + 1;
-          x0 = x0 + (int)x_velocity;
-          x1 = x1 + (int)x_velocity;
-          x2 = x2 + (int)x_velocity;
-          x3 = x3 + (int)x_velocity;
+        // } else if ((third_tick % 4 < 2) && (y_velocity < 0.7) &&
+        //            (y_velocity > 0.351)) {
+        //   the_lander.top_left.y = the_lander.top_left.y + 1;
+        //   the_lander.top_right.y = the_lander.top_right.y + 1;
+        //   the_lander.bottom_right.y = the_lander.bottom_right.y + 1;
+        //   the_lander.bottom_left.y = the_lander.bottom_left.y + 1;
+        //   the_lander.top_left.x = the_lander.top_left.x + (int)x_velocity;
+        //   the_lander.top_right.x = the_lander.top_right.x + (int)x_velocity;
+        //   the_lander.bottom_right.x =
+        //       the_lander.bottom_right.x + (int)x_velocity;
+        //   the_lander.bottom_left.x = the_lander.bottom_left.x + (int)x_velocity;
+        // } else if ((third_tick % 4 < 3) && (y_velocity < 1) &&
+        //            (y_velocity > 0.71)) {
+        //   the_lander.top_left.y = the_lander.top_left.y + 1;
+        //   the_lander.top_right.y = the_lander.top_right.y + 1;
+        //   the_lander.bottom_right.y = the_lander.bottom_right.y + 1;
+        //   the_lander.bottom_left.y = the_lander.bottom_left.y + 1;
+        //   the_lander.top_left.x = the_lander.top_left.x + (int)x_velocity;
+        //   the_lander.top_right.x = the_lander.top_right.x + (int)x_velocity;
+        //   the_lander.bottom_right.x =
+        //       the_lander.bottom_right.x + (int)x_velocity;
+        //   the_lander.bottom_left.x = the_lander.bottom_left.x + (int)x_velocity;
 
-        } else if ((third_tick % 4 < 1) && (y_velocity > -0.35) &&
-                   (y_velocity <
-                    -0.1)) { // if tick_is_odd and the velocity falls in the
-                             // correct range, then add to y_velocity
-          y_point0 = y_point0 - 1;
-          y_point1 = y_point1 - 1;
-          y2 = y2 - 1;
-          y3 = y3 - 1;
-          x0 = x0 + (int)x_velocity;
-          x1 = x1 + (int)x_velocity;
-          x2 = x2 + (int)x_velocity;
-          x3 = x3 + (int)x_velocity;
+        // } else if ((third_tick % 4 < 1) && (y_velocity > -0.35) &&
+        //            (y_velocity <
+        //             -0.1)) { // if tick_is_odd and the velocity falls in the
+        //                      // correct range, then add to y_velocity
+        //   the_lander.top_left.y = the_lander.top_left.y - 1;
+        //   the_lander.top_right.y = the_lander.top_right.y - 1;
+        //   the_lander.bottom_right.y = the_lander.bottom_right.y - 1;
+        //   the_lander.bottom_left.y = the_lander.bottom_left.y - 1;
+        //   the_lander.top_left.x = the_lander.top_left.x + (int)x_velocity;
+        //   the_lander.top_right.x = the_lander.top_right.x + (int)x_velocity;
+        //   the_lander.bottom_right.x =
+        //       the_lander.bottom_right.x + (int)x_velocity;
+        //   the_lander.bottom_left.x = the_lander.bottom_left.x + (int)x_velocity;
 
-        } else if ((third_tick % 4 < 2) && (y_velocity > -0.7) &&
-                   (y_velocity < -0.351)) {
-          y_point0 = y_point0 - 1;
-          y_point1 = y_point1 - 1;
-          y2 = y2 - 1;
-          y3 = y3 - 1;
-          x0 = x0 + (int)x_velocity;
-          x1 = x1 + (int)x_velocity;
-          x2 = x2 + (int)x_velocity;
-          x3 = x3 + (int)x_velocity;
+        // } else if ((third_tick % 4 < 2) && (y_velocity > -0.7) &&
+        //            (y_velocity < -0.351)) {
+        //   the_lander.top_left.y = the_lander.top_left.y - 1;
+        //   the_lander.top_right.y = the_lander.top_right.y - 1;
+        //   the_lander.bottom_right.y = the_lander.bottom_right.y - 1;
+        //   the_lander.bottom_left.y = the_lander.bottom_left.y - 1;
+        //   the_lander.top_left.x = the_lander.top_left.x + (int)x_velocity;
+        //   the_lander.top_right.x = the_lander.top_right.x + (int)x_velocity;
+        //   the_lander.bottom_right.x =
+        //       the_lander.bottom_right.x + (int)x_velocity;
+        //   the_lander.bottom_left.x = the_lander.bottom_left.x + (int)x_velocity;
 
-        } else if ((third_tick % 4 < 3) && (y_velocity > -1) &&
-                   (y_velocity < -0.71)) {
-          y_point0 = y_point0 - 1;
-          y_point1 = y_point1 - 1;
-          y2 = y2 - 1;
-          y3 = y3 - 1;
-          x0 = x0 + (int)x_velocity;
-          x1 = x1 + (int)x_velocity;
-          x2 = x2 + (int)x_velocity;
-          x3 = x3 + (int)x_velocity;
+        // } else if ((third_tick % 4 < 3) && (y_velocity > -1) &&
+        //            (y_velocity < -0.71)) {
+        //   the_lander.top_left.y = the_lander.top_left.y - 1;
+        //   the_lander.top_right.y = the_lander.top_right.y - 1;
+        //   the_lander.bottom_right.y = the_lander.bottom_right.y - 1;
+        //   the_lander.bottom_left.y = the_lander.bottom_left.y - 1;
+        //   the_lander.top_left.x = the_lander.top_left.x + (int)x_velocity;
+        //   the_lander.top_right.x = the_lander.top_right.x + (int)x_velocity;
+        //   the_lander.bottom_right.x =
+        //       the_lander.bottom_right.x + (int)x_velocity;
+        //   the_lander.bottom_left.x = the_lander.bottom_left.x + (int)x_velocity;
 
-        } else {
-          y_point0 = y_point0 + (int)y_velocity;
-          y_point1 = y_point1 + (int)y_velocity;
-          y2 = y2 + (int)y_velocity;
-          y3 = y3 + (int)y_velocity;
-          x0 = x0 + (int)x_velocity;
-          x1 = x1 + (int)x_velocity;
-          x2 = x2 + (int)x_velocity;
-          x3 = x3 + (int)x_velocity;
-        }
+        // } else {
+        //   the_lander.top_left.y = the_lander.top_left.y + (int)y_velocity;
+        //   the_lander.top_right.y = the_lander.top_right.y + (int)y_velocity;
+        //   the_lander.bottom_right.y =
+        //       the_lander.bottom_right.y + (int)y_velocity;
+        //   the_lander.bottom_left.y = the_lander.bottom_left.y + (int)y_velocity;
+        //   the_lander.top_left.x = the_lander.top_left.x + (int)x_velocity;
+        //   the_lander.top_right.x = the_lander.top_right.x + (int)x_velocity;
+        //   the_lander.bottom_right.x =
+        //       the_lander.bottom_right.x + (int)x_velocity;
+        //   the_lander.bottom_left.x = the_lander.bottom_left.x + (int)x_velocity;
+        // }
 
-        // incrementing by 0.5 for  the x_velcoty
-        if (tick_is_odd && (x_velocity < 1) &&
-            (x_velocity > 0.2)) { // if tick_is_odd and the velocity falls in
-                                  // the correct range, then add to y_velocity
-          y_point0 = y_point0 + (int)y_velocity;
-          y_point1 = y_point1 + (int)y_velocity;
-          y2 = y2 + (int)y_velocity;
-          y3 = y3 + (int)y_velocity;
-          x0 = x0 + 1;
-          x1 = x1 + 1;
-          x2 = x2 + 1;
-          x3 = x3 + 1;
+        // // incrementing by 0.5 for  the x_velcoty
+        // if (tick_is_odd && (x_velocity < 1) &&
+        //     (x_velocity > 0.2)) { // if tick_is_odd and the velocity falls in
+        //                           // the correct range, then add to y_velocity
+        //   the_lander.top_left.y = the_lander.top_left.y + (int)y_velocity;
+        //   the_lander.top_right.y = the_lander.top_right.y + (int)y_velocity;
+        //   the_lander.bottom_right.y =
+        //       the_lander.bottom_right.y + (int)y_velocity;
+        //   the_lander.bottom_left.y = the_lander.bottom_left.y + (int)y_velocity;
+        //   the_lander.top_left.x = the_lander.top_left.x + 1;
+        //   the_lander.top_right.x = the_lander.top_right.x + 1;
+        //   the_lander.bottom_right.x = the_lander.bottom_right.x + 1;
+        //   the_lander.bottom_left.x = the_lander.bottom_left.x + 1;
 
-        } else if (tick_is_odd && (x_velocity > -1) && (x_velocity < -0.2)) {
-          y_point0 = y_point0 + (int)y_velocity;
-          y_point1 = y_point1 + (int)y_velocity;
-          y2 = y2 + (int)y_velocity;
-          y3 = y3 + (int)y_velocity;
-          x0 = x0 - 1;
-          x1 = x1 - 1;
-          x2 = x2 - 1;
-          x3 = x3 - 1;
+        // } else if (tick_is_odd && (x_velocity > -1) && (x_velocity < -0.2)) {
+        //   the_lander.top_left.y = the_lander.top_left.y + (int)y_velocity;
+        //   the_lander.top_right.y = the_lander.top_right.y + (int)y_velocity;
+        //   the_lander.bottom_right.y =
+        //       the_lander.bottom_right.y + (int)y_velocity;
+        //   the_lander.bottom_left.y = the_lander.bottom_left.y + (int)y_velocity;
+        //   the_lander.top_left.x = the_lander.top_left.x - 1;
+        //   the_lander.top_right.x = the_lander.top_right.x - 1;
+        //   the_lander.bottom_right.x = the_lander.bottom_right.x - 1;
+        //   the_lander.bottom_left.x = the_lander.bottom_left.x - 1;
 
-        } else {
-          y_point0 = y_point0 + (int)y_velocity;
-          y_point1 = y_point1 + (int)y_velocity;
-          y2 = y2 + (int)y_velocity;
-          y3 = y3 + (int)y_velocity;
-          x0 = x0 + (int)x_velocity;
-          x1 = x1 + (int)x_velocity;
-          x2 = x2 + (int)x_velocity;
-          x3 = x3 + (int)x_velocity;
-        }
+        // } else {
+        //   the_lander.top_left.y = the_lander.top_left.y + (int)y_velocity;
+        //   the_lander.top_right.y = the_lander.top_right.y + (int)y_velocity;
+        //   the_lander.bottom_right.y =
+        //       the_lander.bottom_right.y + (int)y_velocity;
+        //   the_lander.bottom_left.y = the_lander.bottom_left.y + (int)y_velocity;
+        //   the_lander.top_left.x = the_lander.top_left.x + (int)x_velocity;
+        //   the_lander.top_right.x = the_lander.top_right.x + (int)x_velocity;
+        //   the_lander.bottom_right.x =
+        //       the_lander.bottom_right.x + (int)x_velocity;
+        //   the_lander.bottom_left.x = the_lander.bottom_left.x + (int)x_velocity;
+        // }
 
         // if statements to turn left
-        if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
-            ((the_lander.angle >= 80) && (the_lander.angle < 100))) {
-          x0 = x0 + 3;
-          y_point0 = y_point0 - 1;
-          x1 = x1 + 1;
-          y_point1 = y_point1 + 3;
-          x2 = x2 - 3;
-          y2 = y2 + 1;
-          x3 = x3 - 1;
-          y3 = y3 - 3;
-          // rotate++;
-          lean_right(&the_lander);
-        } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
-                   ((the_lander.angle >= 60) && (the_lander.angle < 80))) {
-          x0 = x0 + 2;
-          y_point0 = y_point0 - 1;
-          x1 = x1 + 1;
-          y_point1 = y_point1 + 2;
-          x2 = x2 - 2;
-          y2 = y2 + 1;
-          x3 = x3 - 1;
-          y3 = y3 - 2;
-          // rotate++;
-          lean_right(&the_lander);
-        } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
-                   ((the_lander.angle >= 40) && (the_lander.angle < 60))) {
-          x0 = x0 + 2;
-          y_point0 = y_point0 + 1;
-          x1 = x1 - 1;
-          y_point1 = y_point1 + 2;
-          x2 = x2 - 2;
-          y2 = y2 - 1;
-          x3 = x3 + 1;
-          y3 = y3 - 2;
-          // rotate++;
-          lean_right(&the_lander);
-        } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
-                   ((the_lander.angle >= 20) && (the_lander.angle < 40))) {
-          x0 = x0 + 3;
-          y_point0 = y_point0 + 1;
-          x1 = x1 - 1;
-          y_point1 = y_point1 + 3;
-          x2 = x2 - 3;
-          y2 = y2 - 1;
-          x3 = x3 + 1;
-          y3 = y3 - 3;
-          // rotate++;
-          lean_right(&the_lander);
-        } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
-                   ((the_lander.angle >= 100) && (the_lander.angle < 120))) {
-          x0 = x0 + 1;
-          y_point0 = y_point0 - 3;
-          x1 = x1 + 3;
-          y_point1 = y_point1 + 1;
-          x2 = x2 - 1;
-          y2 = y2 + 3;
-          x3 = x3 - 3;
-          y3 = y3 - 1;
-          // rotate++;
-          lean_right(&the_lander);
-        } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
-                   ((the_lander.angle >= 120) && (the_lander.angle < 140))) {
-          x0 = x0 + 1;
-          y_point0 = y_point0 - 2;
-          x1 = x1 + 2;
-          y_point1 = y_point1 + 1;
-          x2 = x2 - 1;
-          y2 = y2 + 2;
-          x3 = x3 - 2;
-          y3 = y3 - 1;
-          // rotate++;
-          lean_right(&the_lander);
-        } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
-                   ((the_lander.angle >= 140) && (the_lander.angle < 160))) {
-          x0 = x0 - 1;
-          y_point0 = y_point0 - 2;
-          x1 = x1 + 2;
-          y_point1 = y_point1 - 1;
-          x2 = x2 + 1;
-          y2 = y2 + 2;
-          x3 = x3 - 2;
-          y3 = y3 + 1;
-          // rotate++;
-          lean_right(&the_lander);
-        } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
-                   ((the_lander.angle >= 160) && (the_lander.angle < 180))) {
-          x0 = x0 - 1;
-          y_point0 = y_point0 - 3;
-          x1 = x1 + 3;
-          y_point1 = y_point1 - 1;
-          x2 = x2 + 1;
-          y2 = y2 + 3;
-          x3 = x3 - 3;
-          y3 = y3 + 1;
-          // rotate++;
-          lean_right(&the_lander);
-        }
+        // if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
+        //     ((the_lander.angle >= 80) && (the_lander.angle < 100))) {
+        //   the_lander.top_left.x = the_lander.top_left.x + 3;
+        //   the_lander.top_left.y = the_lander.top_left.y - 1;
+        //   the_lander.top_right.x = the_lander.top_right.x + 1;
+        //   the_lander.top_right.y = the_lander.top_right.y + 3;
+        //   the_lander.bottom_right.x = the_lander.bottom_right.x - 3;
+        //   the_lander.bottom_right.y = the_lander.bottom_right.y + 1;
+        //   the_lander.bottom_left.x = the_lander.bottom_left.x - 1;
+        //   the_lander.bottom_left.y = the_lander.bottom_left.y - 3;
+        //   // rotate++;
+        //   lean_right(&the_lander);
+        // } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK)
+        // &&
+        //            ((the_lander.angle >= 60) && (the_lander.angle < 80))) {
+        //   the_lander.top_left.x = the_lander.top_left.x + 2;
+        //   the_lander.top_left.y = the_lander.top_left.y - 1;
+        //   the_lander.top_right.x = the_lander.top_right.x + 1;
+        //   the_lander.top_right.y = the_lander.top_right.y + 2;
+        //   the_lander.bottom_right.x = the_lander.bottom_right.x - 2;
+        //   the_lander.bottom_right.y = the_lander.bottom_right.y + 1;
+        //   the_lander.bottom_left.x = the_lander.bottom_left.x - 1;
+        //   the_lander.bottom_left.y = the_lander.bottom_left.y - 2;
+        //   // rotate++;
+        //   lean_right(&the_lander);
+        // } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK)
+        // &&
+        //            ((the_lander.angle >= 40) && (the_lander.angle < 60))) {
+        //   the_lander.top_left.x = the_lander.top_left.x + 2;
+        //   the_lander.top_left.y = the_lander.top_left.y + 1;
+        //   the_lander.top_right.x = the_lander.top_right.x - 1;
+        //   the_lander.top_right.y = the_lander.top_right.y + 2;
+        //   the_lander.bottom_right.x = the_lander.bottom_right.x - 2;
+        //   the_lander.bottom_right.y = the_lander.bottom_right.y - 1;
+        //   the_lander.bottom_left.x = the_lander.bottom_left.x + 1;
+        //   the_lander.bottom_left.y = the_lander.bottom_left.y - 2;
+        //   // rotate++;
+        //   lean_right(&the_lander);
+        // } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK)
+        // &&
+        //            ((the_lander.angle >= 20) && (the_lander.angle < 40))) {
+        //   the_lander.top_left.x = the_lander.top_left.x + 3;
+        //   the_lander.top_left.y = the_lander.top_left.y + 1;
+        //   the_lander.top_right.x = the_lander.top_right.x - 1;
+        //   the_lander.top_right.y = the_lander.top_right.y + 3;
+        //   the_lander.bottom_right.x = the_lander.bottom_right.x - 3;
+        //   the_lander.bottom_right.y = the_lander.bottom_right.y - 1;
+        //   the_lander.bottom_left.x = the_lander.bottom_left.x + 1;
+        //   the_lander.bottom_left.y = the_lander.bottom_left.y - 3;
+        //   // rotate++;
+        //   lean_right(&the_lander);
+        // } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK)
+        // &&
+        //            ((the_lander.angle >= 100) && (the_lander.angle < 120))) {
+        //   the_lander.top_left.x = the_lander.top_left.x + 1;
+        //   the_lander.top_left.y = the_lander.top_left.y - 3;
+        //   the_lander.top_right.x = the_lander.top_right.x + 3;
+        //   the_lander.top_right.y = the_lander.top_right.y + 1;
+        //   the_lander.bottom_right.x = the_lander.bottom_right.x - 1;
+        //   the_lander.bottom_right.y = the_lander.bottom_right.y + 3;
+        //   the_lander.bottom_left.x = the_lander.bottom_left.x - 3;
+        //   the_lander.bottom_left.y = the_lander.bottom_left.y - 1;
+        //   // rotate++;
+        //   lean_right(&the_lander);
+        // } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK)
+        // &&
+        //            ((the_lander.angle >= 120) && (the_lander.angle < 140))) {
+        //   the_lander.top_left.x = the_lander.top_left.x + 1;
+        //   the_lander.top_left.y = the_lander.top_left.y - 2;
+        //   the_lander.top_right.x = the_lander.top_right.x + 2;
+        //   the_lander.top_right.y = the_lander.top_right.y + 1;
+        //   the_lander.bottom_right.x = the_lander.bottom_right.x - 1;
+        //   the_lander.bottom_right.y = the_lander.bottom_right.y + 2;
+        //   the_lander.bottom_left.x = the_lander.bottom_left.x - 2;
+        //   the_lander.bottom_left.y = the_lander.bottom_left.y - 1;
+        //   // rotate++;
+        //   lean_right(&the_lander);
+        // } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK)
+        // &&
+        //            ((the_lander.angle >= 140) && (the_lander.angle < 160))) {
+        //   the_lander.top_left.x = the_lander.top_left.x - 1;
+        //   the_lander.top_left.y = the_lander.top_left.y - 2;
+        //   the_lander.top_right.x = the_lander.top_right.x + 2;
+        //   the_lander.top_right.y = the_lander.top_right.y - 1;
+        //   the_lander.bottom_right.x = the_lander.bottom_right.x + 1;
+        //   the_lander.bottom_right.y = the_lander.bottom_right.y + 2;
+        //   the_lander.bottom_left.x = the_lander.bottom_left.x - 2;
+        //   the_lander.bottom_left.y = the_lander.bottom_left.y + 1;
+        //   // rotate++;
+        //   lean_right(&the_lander);
+        // } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK)
+        // &&
+        //            ((the_lander.angle >= 160) && (the_lander.angle < 180))) {
+        //   the_lander.top_left.x = the_lander.top_left.x - 1;
+        //   the_lander.top_left.y = the_lander.top_left.y - 3;
+        //   the_lander.top_right.x = the_lander.top_right.x + 3;
+        //   the_lander.top_right.y = the_lander.top_right.y - 1;
+        //   the_lander.bottom_right.x = the_lander.bottom_right.x + 1;
+        //   the_lander.bottom_right.y = the_lander.bottom_right.y + 3;
+        //   the_lander.bottom_left.x = the_lander.bottom_left.x - 3;
+        //   the_lander.bottom_left.y = the_lander.bottom_left.y + 1;
+        //   // rotate++;
+        //   lean_right(&the_lander);
+        // }
 
-        // turn right calculations:
-        else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
-                 ((the_lander.angle >= 60) && (the_lander.angle < 80))) {
-          x0 = x0 - 3;
-          y_point0 = y_point0 + 1;
-          x1 = x1 - 1;
-          y_point1 = y_point1 - 3;
-          x2 = x2 + 3;
-          y2 = y2 - 1;
-          x3 = x3 + 1;
-          y3 = y3 + 3;
-          // rotate--;
-          lean_left(&the_lander);
-        } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
-                   ((the_lander.angle >= 40) && (the_lander.angle < 60))) {
-          x0 = x0 - 2;
-          y_point0 = y_point0 + 1;
-          x1 = x1 - 1;
-          y_point1 = y_point1 - 2;
-          x2 = x2 + 2;
-          y2 = y2 - 1;
-          x3 = x3 + 1;
-          y3 = y3 + 2;
-          // rotate--;
-          lean_left(&the_lander);
-        } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
-                   ((the_lander.angle >= 20) && (the_lander.angle < 40))) {
-          x0 = x0 - 2;
-          y_point0 = y_point0 - 1;
-          x1 = x1 + 1;
-          y_point1 = y_point1 - 2;
-          x2 = x2 + 2;
-          y2 = y2 + 1;
-          x3 = x3 - 1;
-          y3 = y3 + 2;
-          // rotate--;
-          lean_left(&the_lander);
-        } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
-                   ((the_lander.angle >= 0) && (the_lander.angle < 20))) {
-          x0 = x0 - 3;
-          y_point0 = y_point0 - 1;
-          x1 = x1 + 1;
-          y_point1 = y_point1 - 3;
-          x2 = x2 + 3;
-          y2 = y2 + 1;
-          x3 = x3 - 1;
-          y3 = y3 + 3;
-          // rotate--;
-          lean_left(&the_lander);
-        } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
-                   ((the_lander.angle >= 80) && (the_lander.angle < 100))) {
-          x0 = x0 - 1;
-          y_point0 = y_point0 + 3;
-          x1 = x1 - 3;
-          y_point1 = y_point1 - 1;
-          x2 = x2 + 1;
-          y2 = y2 - 3;
-          x3 = x3 + 3;
-          y3 = y3 + 1;
-          // rotate--;
-          lean_left(&the_lander);
-        } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
-                   ((the_lander.angle >= 100) && (the_lander.angle < 120))) {
-          x0 = x0 - 1;
-          y_point0 = y_point0 + 2;
-          x1 = x1 - 2;
-          y_point1 = y_point1 - 1;
-          x2 = x2 + 1;
-          y2 = y2 - 2;
-          x3 = x3 + 2;
-          y3 = y3 + 1;
-          // rotate--;
-          lean_left(&the_lander);
-        } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
-                   ((the_lander.angle >= 120) && (the_lander.angle < 140))) {
-          x0 = x0 + 1;
-          y_point0 = y_point0 + 2;
-          x1 = x1 - 2;
-          y_point1 = y_point1 + 1;
-          x2 = x2 - 1;
-          y2 = y2 - 2;
-          x3 = x3 + 2;
-          y3 = y3 - 1;
-          // rotate--;
-          lean_left(&the_lander);
-        } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
-                   ((the_lander.angle >= 140) && (the_lander.angle < 160))) {
-          x0 = x0 + 1;
-          y_point0 = y_point0 + 3;
-          x1 = x1 - 3;
-          y_point1 = y_point1 + 1;
-          x2 = x2 - 1;
-          y2 = y2 - 3;
-          x3 = x3 + 3;
-          y3 = y3 - 1;
-          // rotate--;
-          lean_left(&the_lander);
-        }
-        
+        // // turn right calculations:
+        // else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
+        //          ((the_lander.angle >= 60) && (the_lander.angle < 80))) {
+        //   the_lander.top_left.x = the_lander.top_left.x - 3;
+        //   the_lander.top_left.y = the_lander.top_left.y + 1;
+        //   the_lander.top_right.x = the_lander.top_right.x - 1;
+        //   the_lander.top_right.y = the_lander.top_right.y - 3;
+        //   the_lander.bottom_right.x = the_lander.bottom_right.x + 3;
+        //   the_lander.bottom_right.y = the_lander.bottom_right.y - 1;
+        //   the_lander.bottom_left.x = the_lander.bottom_left.x + 1;
+        //   the_lander.bottom_left.y = the_lander.bottom_left.y + 3;
+        //   // rotate--;
+        //   lean_left(&the_lander);
+        // } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK)
+        // &&
+        //            ((the_lander.angle >= 40) && (the_lander.angle < 60))) {
+        //   the_lander.top_left.x = the_lander.top_left.x - 2;
+        //   the_lander.top_left.y = the_lander.top_left.y + 1;
+        //   the_lander.top_right.x = the_lander.top_right.x - 1;
+        //   the_lander.top_right.y = the_lander.top_right.y - 2;
+        //   the_lander.bottom_right.x = the_lander.bottom_right.x + 2;
+        //   the_lander.bottom_right.y = the_lander.bottom_right.y - 1;
+        //   the_lander.bottom_left.x = the_lander.bottom_left.x + 1;
+        //   the_lander.bottom_left.y = the_lander.bottom_left.y + 2;
+        //   // rotate--;
+        //   lean_left(&the_lander);
+        // } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK)
+        // &&
+        //            ((the_lander.angle >= 20) && (the_lander.angle < 40))) {
+        //   the_lander.top_left.x = the_lander.top_left.x - 2;
+        //   the_lander.top_left.y = the_lander.top_left.y - 1;
+        //   the_lander.top_right.x = the_lander.top_right.x + 1;
+        //   the_lander.top_right.y = the_lander.top_right.y - 2;
+        //   the_lander.bottom_right.x = the_lander.bottom_right.x + 2;
+        //   the_lander.bottom_right.y = the_lander.bottom_right.y + 1;
+        //   the_lander.bottom_left.x = the_lander.bottom_left.x - 1;
+        //   the_lander.bottom_left.y = the_lander.bottom_left.y + 2;
+        //   // rotate--;
+        //   lean_left(&the_lander);
+        // } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK)
+        // &&
+        //            ((the_lander.angle >= 0) && (the_lander.angle < 20))) {
+        //   the_lander.top_left.x = the_lander.top_left.x - 3;
+        //   the_lander.top_left.y = the_lander.top_left.y - 1;
+        //   the_lander.top_right.x = the_lander.top_right.x + 1;
+        //   the_lander.top_right.y = the_lander.top_right.y - 3;
+        //   the_lander.bottom_right.x = the_lander.bottom_right.x + 3;
+        //   the_lander.bottom_right.y = the_lander.bottom_right.y + 1;
+        //   the_lander.bottom_left.x = the_lander.bottom_left.x - 1;
+        //   the_lander.bottom_left.y = the_lander.bottom_left.y + 3;
+        //   // rotate--;
+        //   lean_left(&the_lander);
+        // } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK)
+        // &&
+        //            ((the_lander.angle >= 80) && (the_lander.angle < 100))) {
+        //   the_lander.top_left.x = the_lander.top_left.x - 1;
+        //   the_lander.top_left.y = the_lander.top_left.y + 3;
+        //   the_lander.top_right.x = the_lander.top_right.x - 3;
+        //   the_lander.top_right.y = the_lander.top_right.y - 1;
+        //   the_lander.bottom_right.x = the_lander.bottom_right.x + 1;
+        //   the_lander.bottom_right.y = the_lander.bottom_right.y - 3;
+        //   the_lander.bottom_left.x = the_lander.bottom_left.x + 3;
+        //   the_lander.bottom_left.y = the_lander.bottom_left.y + 1;
+        //   // rotate--;
+        //   lean_left(&the_lander);
+        // } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK)
+        // &&
+        //            ((the_lander.angle >= 100) && (the_lander.angle < 120))) {
+        //   the_lander.top_left.x = the_lander.top_left.x - 1;
+        //   the_lander.top_left.y = the_lander.top_left.y + 2;
+        //   the_lander.top_right.x = the_lander.top_right.x - 2;
+        //   the_lander.top_right.y = the_lander.top_right.y - 1;
+        //   the_lander.bottom_right.x = the_lander.bottom_right.x + 1;
+        //   the_lander.bottom_right.y = the_lander.bottom_right.y - 2;
+        //   the_lander.bottom_left.x = the_lander.bottom_left.x + 2;
+        //   the_lander.bottom_left.y = the_lander.bottom_left.y + 1;
+        //   // rotate--;
+        //   lean_left(&the_lander);
+        // } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK)
+        // &&
+        //            ((the_lander.angle >= 120) && (the_lander.angle < 140))) {
+        //   the_lander.top_left.x = the_lander.top_left.x + 1;
+        //   the_lander.top_left.y = the_lander.top_left.y + 2;
+        //   the_lander.top_right.x = the_lander.top_right.x - 2;
+        //   the_lander.top_right.y = the_lander.top_right.y + 1;
+        //   the_lander.bottom_right.x = the_lander.bottom_right.x - 1;
+        //   the_lander.bottom_right.y = the_lander.bottom_right.y - 2;
+        //   the_lander.bottom_left.x = the_lander.bottom_left.x + 2;
+        //   the_lander.bottom_left.y = the_lander.bottom_left.y - 1;
+        //   // rotate--;
+        //   lean_left(&the_lander);
+        // } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK)
+        // &&
+        //            ((the_lander.angle >= 140) && (the_lander.angle < 160))) {
+        //   the_lander.top_left.x = the_lander.top_left.x + 1;
+        //   the_lander.top_left.y = the_lander.top_left.y + 3;
+        //   the_lander.top_right.x = the_lander.top_right.x - 3;
+        //   the_lander.top_right.y = the_lander.top_right.y + 1;
+        //   the_lander.bottom_right.x = the_lander.bottom_right.x - 1;
+        //   the_lander.bottom_right.y = the_lander.bottom_right.y - 3;
+        //   the_lander.bottom_left.x = the_lander.bottom_left.x + 3;
+        //   the_lander.bottom_left.y = the_lander.bottom_left.y - 1;
+        //   // rotate--;
+        //   lean_left(&the_lander);
+        // }
+
+        // draw_lander(&the_lander);
+
         // offscreen inidication
 
         // erase the triangle
@@ -676,87 +719,112 @@ void gameControl_tick() {
           lastDrawTop = false;
         }
 
-        if ((x0 <= -10) || (x3 <= -10)) {
+        if ((the_lander.top_left.x <= -10) ||
+            (the_lander.bottom_left.x <= -10)) {
           // set triangle scalar
-          if (x0 >= -MAX_OFFSCREEN_CONSTANT) {
-            triangle_scalar =
-                (MAX_OFFSCREEN_CONSTANT - triangle_scalar + (int)x0) / 30;
+          if (the_lander.top_left.x >= -MAX_OFFSCREEN_CONSTANT) {
+            triangle_scalar = (MAX_OFFSCREEN_CONSTANT - triangle_scalar +
+                               (int)the_lander.top_left.x) /
+                              30;
           }
 
           display_fillTriangle(
-              0, (int)y_point0, 15 + (triangle_scalar / 4),
-              (int)y_point0 + 5 + triangle_scalar, 15 + (triangle_scalar / 4),
-              (int)y_point0 - 5 - triangle_scalar, DISPLAY_WHITE);
+              0, (int)the_lander.top_left.y, 15 + (triangle_scalar / 4),
+              (int)the_lander.top_left.y + 5 + triangle_scalar,
+              15 + (triangle_scalar / 4),
+              (int)the_lander.top_left.y - 5 - triangle_scalar, DISPLAY_WHITE);
 
           // display_fillTriangle(5,
-          //                     (int)y_point0,
+          //                     (int)the_lander.top_left.y,
           //                     15 ,
-          //                     (int)y_point0 + 5,
+          //                     (int)the_lander.top_left.y + 5,
           //                     15 ,
-          //                     (int)y_point0 - 5,
+          //                     (int)the_lander.top_left.y - 5,
           //                     DISPLAY_WHITE);
 
           // display_fillRect(0, 0, 25, DISPLAY_HEIGHT, DISPLAY_BLACK);
           lastDrawLeft = true;
 
-        } else if ((x1 >= 330) || (x2 >= 330)) {
+        } else if ((the_lander.top_right.x >= 330) ||
+                   (the_lander.bottom_right.x >= 330)) {
           // set triangle scalar
-          if (x0 <= MAX_OFFSCREEN_CONSTANT) {
-            triangle_scalar =
-                (MAX_OFFSCREEN_CONSTANT + triangle_scalar - (int)x0) / 30;
+          if (the_lander.top_left.x <= MAX_OFFSCREEN_CONSTANT) {
+            triangle_scalar = (MAX_OFFSCREEN_CONSTANT + triangle_scalar -
+                               (int)the_lander.top_left.x) /
+                              30;
           }
 
-          display_fillTriangle(DISPLAY_WIDTH, (int)y_point0,
+          display_fillTriangle(DISPLAY_WIDTH, (int)the_lander.top_left.y,
                                DISPLAY_WIDTH - 15 - (triangle_scalar / 4),
-                               (int)y_point0 - 5 - triangle_scalar,
+                               (int)the_lander.top_left.y - 5 - triangle_scalar,
                                DISPLAY_WIDTH - 15 - (triangle_scalar / 4),
-                               (int)y_point0 + 5 + triangle_scalar,
+                               (int)the_lander.top_left.y + 5 + triangle_scalar,
                                DISPLAY_WHITE);
 
           lastDrawRight = true;
-        } else if ((y_point0 <= -10) || (y3 <= -10)) {
-          if (y_point0 <= -MAX_OFFSCREEN_CONSTANT + 400) {
-            triangle_scalar =
-                (MAX_OFFSCREEN_CONSTANT - triangle_scalar + (int)y_point0) / 30;
+        } else if ((the_lander.top_left.y <= -10) ||
+                   (the_lander.bottom_left.y <= -10)) {
+          if (the_lander.top_left.y <= -MAX_OFFSCREEN_CONSTANT + 400) {
+            triangle_scalar = (MAX_OFFSCREEN_CONSTANT - triangle_scalar +
+                               (int)the_lander.top_left.y) /
+                              30;
           }
 
           // display_fillTriangle(0 ,
-          //                     (int)y_point0,
+          //                     (int)the_lander.top_left.y,
           //                     15 + (triangle_scalar / 4),
-          //                     (int)y_point0 + 5 + triangle_scalar,
-          //                     15 + (triangle_scalar / 4),
-          //                     (int)y_point0 - 5 - triangle_scalar,
-          //                     DISPLAY_WHITE);
+          //                     (int)the_lander.top_left.y + 5 +
+          //                     triangle_scalar, 15 + (triangle_scalar / 4),
+          //                     (int)the_lander.top_left.y - 5 -
+          //                     triangle_scalar, DISPLAY_WHITE);
 
-          display_fillTriangle((int)x0, 0, (int)x0 - 15 - triangle_scalar,
-                               15 - (triangle_scalar / 4),
-                               (int)x0 + 15 + triangle_scalar,
-                               15 - (triangle_scalar / 4), DISPLAY_WHITE);
+          display_fillTriangle(
+              (int)the_lander.top_left.x, 0,
+              (int)the_lander.top_left.x - 15 - triangle_scalar,
+              15 - (triangle_scalar / 4),
+              (int)the_lander.top_left.x + 15 + triangle_scalar,
+              15 - (triangle_scalar / 4), DISPLAY_WHITE);
 
           lastDrawTop = true;
         }
 
         // update and erase the box
-        display_drawLine(x0, y_point0, x1, y_point1, DISPLAY_RED);
-        display_drawLine(x1, y_point1, x2, y2, DISPLAY_CYAN);
-        display_drawLine(x2, y2, x3, y3, DISPLAY_CYAN);
-        display_drawLine(x3, y3, x0, y_point0, DISPLAY_CYAN);
-        display_drawPixel(x0, y_point0, DISPLAY_YELLOW);
+        // display_drawLine(the_lander.top_left.x, the_lander.top_left.y,
+        // the_lander.top_right.x, the_lander.top_right.y, DISPLAY_RED);
+        // display_drawLine(the_lander.top_right.x, the_lander.top_right.y,
+        // the_lander.bottom_right.x, the_lander.bottom_right.y, DISPLAY_CYAN);
+        // display_drawLine(the_lander.bottom_right.x,
+        // the_lander.bottom_right.y, the_lander.bottom_left.x,
+        // the_lander.bottom_left.y, DISPLAY_CYAN);
+        // display_drawLine(the_lander.bottom_left.x, the_lander.bottom_left.y,
+        // the_lander.top_left.x, the_lander.top_left.y, DISPLAY_CYAN);
+        // display_drawPixel(the_lander.top_left.x, the_lander.top_left.y,
+        // DISPLAY_YELLOW);
         y_velocity = y_velocity + gravity - (THRUST_SCALER * thrust_y);
         x_velocity = x_velocity + (THRUST_SCALER * thrust_x);
         // map1();
         if (level == 1) {
           map1();
-          gameover_control = map1_collide(x0, x1, x2, x3, y_point0, y_point1,
-                                          y2, y3, y_velocity);
+          gameover_control = map1_collide(
+              (double)the_lander.top_left.x, (double)the_lander.top_right.x,
+              (double)the_lander.bottom_right.x,
+              (double)the_lander.bottom_left.x, (double)the_lander.top_left.y,
+              (double)the_lander.top_right.y, (double)the_lander.bottom_right.y,
+              (double)the_lander.bottom_left.y, the_lander.velocity_y);
         } else if (level == 2) {
           map2();
-          gameover_control = map2_collide(x0, x1, x2, x3, y_point0, y_point1,
-                                          y2, y3, y_velocity);
+          gameover_control = map2_collide(
+              the_lander.top_left.x, the_lander.top_right.x,
+              the_lander.bottom_right.x, the_lander.bottom_left.x,
+              the_lander.top_left.y, the_lander.top_right.y,
+              the_lander.bottom_right.y, the_lander.bottom_left.y, the_lander.velocity_y);
         } else if (level == 3) {
           map3();
-          gameover_control = map3_collide(x0, x1, x2, x3, y_point0, y_point1,
-                                          y2, y3, y_velocity);
+          gameover_control = map3_collide(
+              the_lander.top_left.x, the_lander.top_right.x,
+              the_lander.bottom_right.x, the_lander.bottom_left.x,
+              the_lander.top_left.y, the_lander.top_right.y,
+              the_lander.bottom_right.y, the_lander.bottom_left.y, the_lander.velocity_y);
         }
       }
     }

@@ -8,18 +8,29 @@
 #include <stdio.h>
 #include "config.h"
 
+
+
+typedef struct {
+  double x;
+  double y;
+} display_point_double_t;
+
 struct lander_t {
   double angle;
   int8_t position;
   int16_t fuel;
-  display_point_t top_left;
-  display_point_t top_right;
-  display_point_t bottom_right;
-  display_point_t bottom_left;
-  int32_t vertical_velocity;
-  int32_t horizontal_velocity;
+  display_point_double_t top_left;
+  display_point_double_t top_right;
+  display_point_double_t bottom_right;
+  display_point_double_t bottom_left;
+  double velocity_y;
+  double velocity_x;
   bool has_landed;
+  double thrust_x;
+  double thrust_y;
+
 };
+
 
 void lander_init(struct lander_t *lander);
 
