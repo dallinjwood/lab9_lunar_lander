@@ -103,7 +103,6 @@ void gameControl_init(double period_s) {
   display_println("Flip Switch 0 up to Start");
   transition_cnt = 0;
   transition_num_ticks = TRANSITION_TIME / period_s;
-  level = 3;
 }
 
 // Tick the game control logic
