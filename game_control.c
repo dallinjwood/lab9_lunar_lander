@@ -25,7 +25,7 @@
 static bool lastDrawLeft = false;
 static bool lastDrawRight = false;
 static bool lastDrawTop = false;
-static double triangle_scalar = 1;
+static long double triangle_scalar = 1;
 static int16_t level = 1;
 static double y_velocity = 0.9;
 static double x_velocity = -1;
@@ -57,24 +57,6 @@ static uint16_t led_value = 0;
 static uint16_t transition_cnt = 0;
 static uint16_t transition_num_ticks = 0;
 static uint8_t button_value = 0;
-
-
-// void gameControl_init_next_level() {
-//   // the_lander.top_left.x = 320;
-//   // the_lander.top_left.y = 0;
-//   // the_lander.top_right.x = 330;
-//   // the_lander.top_right.y = 0;
-//   // the_lander.bottom_right.x = 330;
-//   // the_lander.bottom_right.y = 10;
-//   // the_lander.bottom_left.x = 320;
-//   // the_lander.bottom_left.y = 10;
-//   // the_lander.velocity_y = 0.9;
-//   // the_lander.velocity_x = -1;
-//   // the_lander.thrust_x = 0;
-//   // the_lander.thrust_y = 0;
-
-
-// }
 
 // Initialize the game control logic
 // This function will initialize the lander and the map.
@@ -285,10 +267,10 @@ void gameControl_tick() {
 
     // printf("vertical thrust: %f\n",get_thrust_y(&the_lander));
     // printf("horizontal thrust: %f\n\n",get_thrust_x(&the_lander));
-    printf("vertical velocity: %f\n", the_lander.velocity_y);
-    printf("Theta: %f\n", the_lander.angle);
-    printf("horizontal velocity: %f\n\n", the_lander.velocity_x);
-    printf("NOT DEAD\n");
+    printf("vertical velocity: %f\t", the_lander.velocity_y);
+    // printf("Theta: %f\n", the_lander.angle);
+    // printf("horizontal velocity: %f\n\n", the_lander.velocity_x);
+    // printf("NOT DEAD\n");
 
     // fuel text cursor
     display_setTextColor(DISPLAY_WHITE);
@@ -332,375 +314,15 @@ void gameControl_tick() {
       the_lander.fuel = the_lander.fuel - 10;
     } else if ((button_value & BUTTONS_BTN1_MASK) == BUTTONS_BTN1_MASK &&
                (the_lander.fuel <= 0)) {
-
       the_lander.fuel = 0;
     }
 
     // testing rotations given preset rotation values
     if (the_lander.top_left.y <= 240) {
       if (!gameover_control) {
-        // erasing the box
-        // display_drawLine(the_lander.top_left.x, the_lander.top_left.y,
-        //                  the_lander.top_right.x, the_lander.top_right.y,
-        //                  DISPLAY_BLACK);
-        // display_drawLine(the_lander.top_right.x, the_lander.top_right.y,
-        //                  the_lander.bottom_right.x,
-        //                  the_lander.bottom_right.y, DISPLAY_BLACK);
-        // display_drawLine(the_lander.bottom_right.x,
-        // the_lander.bottom_right.y,
-        //                  the_lander.bottom_left.x, the_lander.bottom_left.y,
-        //                  DISPLAY_BLACK);
-        // display_drawLine(the_lander.bottom_left.x, the_lander.bottom_left.y,
-        //                  the_lander.top_left.x, the_lander.top_left.y,
-        //                  DISPLAY_BLACK);
-        // display_drawPixel(the_lander.top_left.x, the_lander.top_left.y,
-        //                   DISPLAY_BLACK);
+        
         draw_lander(&the_lander);
 
-        // Testing the idea of incrementing every other tick to solve the  stand
-        // still issue
-        // if ((third_tick % 4 < 1) && (y_velocity < 0.35) &&
-        //     (y_velocity > 0.1)) { // if tick_is_odd and the velocity falls in
-        //                           // the correct range, then add to y_velocity
-        //   the_lander.top_left.y = the_lander.top_left.y + 1;
-        //   the_lander.top_right.y = the_lander.top_right.y + 1;
-        //   the_lander.bottom_right.y = the_lander.bottom_right.y + 1;
-        //   the_lander.bottom_left.y = the_lander.bottom_left.y + 1;
-        //   the_lander.top_left.x = the_lander.top_left.x + (int)x_velocity;
-        //   the_lander.top_right.x = the_lander.top_right.x + (int)x_velocity;
-        //   the_lander.bottom_right.x =
-        //       the_lander.bottom_right.x + (int)x_velocity;
-        //   the_lander.bottom_left.x = the_lander.bottom_left.x + (int)x_velocity;
-
-        // } else if ((third_tick % 4 < 2) && (y_velocity < 0.7) &&
-        //            (y_velocity > 0.351)) {
-        //   the_lander.top_left.y = the_lander.top_left.y + 1;
-        //   the_lander.top_right.y = the_lander.top_right.y + 1;
-        //   the_lander.bottom_right.y = the_lander.bottom_right.y + 1;
-        //   the_lander.bottom_left.y = the_lander.bottom_left.y + 1;
-        //   the_lander.top_left.x = the_lander.top_left.x + (int)x_velocity;
-        //   the_lander.top_right.x = the_lander.top_right.x + (int)x_velocity;
-        //   the_lander.bottom_right.x =
-        //       the_lander.bottom_right.x + (int)x_velocity;
-        //   the_lander.bottom_left.x = the_lander.bottom_left.x + (int)x_velocity;
-        // } else if ((third_tick % 4 < 3) && (y_velocity < 1) &&
-        //            (y_velocity > 0.71)) {
-        //   the_lander.top_left.y = the_lander.top_left.y + 1;
-        //   the_lander.top_right.y = the_lander.top_right.y + 1;
-        //   the_lander.bottom_right.y = the_lander.bottom_right.y + 1;
-        //   the_lander.bottom_left.y = the_lander.bottom_left.y + 1;
-        //   the_lander.top_left.x = the_lander.top_left.x + (int)x_velocity;
-        //   the_lander.top_right.x = the_lander.top_right.x + (int)x_velocity;
-        //   the_lander.bottom_right.x =
-        //       the_lander.bottom_right.x + (int)x_velocity;
-        //   the_lander.bottom_left.x = the_lander.bottom_left.x + (int)x_velocity;
-
-        // } else if ((third_tick % 4 < 1) && (y_velocity > -0.35) &&
-        //            (y_velocity <
-        //             -0.1)) { // if tick_is_odd and the velocity falls in the
-        //                      // correct range, then add to y_velocity
-        //   the_lander.top_left.y = the_lander.top_left.y - 1;
-        //   the_lander.top_right.y = the_lander.top_right.y - 1;
-        //   the_lander.bottom_right.y = the_lander.bottom_right.y - 1;
-        //   the_lander.bottom_left.y = the_lander.bottom_left.y - 1;
-        //   the_lander.top_left.x = the_lander.top_left.x + (int)x_velocity;
-        //   the_lander.top_right.x = the_lander.top_right.x + (int)x_velocity;
-        //   the_lander.bottom_right.x =
-        //       the_lander.bottom_right.x + (int)x_velocity;
-        //   the_lander.bottom_left.x = the_lander.bottom_left.x + (int)x_velocity;
-
-        // } else if ((third_tick % 4 < 2) && (y_velocity > -0.7) &&
-        //            (y_velocity < -0.351)) {
-        //   the_lander.top_left.y = the_lander.top_left.y - 1;
-        //   the_lander.top_right.y = the_lander.top_right.y - 1;
-        //   the_lander.bottom_right.y = the_lander.bottom_right.y - 1;
-        //   the_lander.bottom_left.y = the_lander.bottom_left.y - 1;
-        //   the_lander.top_left.x = the_lander.top_left.x + (int)x_velocity;
-        //   the_lander.top_right.x = the_lander.top_right.x + (int)x_velocity;
-        //   the_lander.bottom_right.x =
-        //       the_lander.bottom_right.x + (int)x_velocity;
-        //   the_lander.bottom_left.x = the_lander.bottom_left.x + (int)x_velocity;
-
-        // } else if ((third_tick % 4 < 3) && (y_velocity > -1) &&
-        //            (y_velocity < -0.71)) {
-        //   the_lander.top_left.y = the_lander.top_left.y - 1;
-        //   the_lander.top_right.y = the_lander.top_right.y - 1;
-        //   the_lander.bottom_right.y = the_lander.bottom_right.y - 1;
-        //   the_lander.bottom_left.y = the_lander.bottom_left.y - 1;
-        //   the_lander.top_left.x = the_lander.top_left.x + (int)x_velocity;
-        //   the_lander.top_right.x = the_lander.top_right.x + (int)x_velocity;
-        //   the_lander.bottom_right.x =
-        //       the_lander.bottom_right.x + (int)x_velocity;
-        //   the_lander.bottom_left.x = the_lander.bottom_left.x + (int)x_velocity;
-
-        // } else {
-        //   the_lander.top_left.y = the_lander.top_left.y + (int)y_velocity;
-        //   the_lander.top_right.y = the_lander.top_right.y + (int)y_velocity;
-        //   the_lander.bottom_right.y =
-        //       the_lander.bottom_right.y + (int)y_velocity;
-        //   the_lander.bottom_left.y = the_lander.bottom_left.y + (int)y_velocity;
-        //   the_lander.top_left.x = the_lander.top_left.x + (int)x_velocity;
-        //   the_lander.top_right.x = the_lander.top_right.x + (int)x_velocity;
-        //   the_lander.bottom_right.x =
-        //       the_lander.bottom_right.x + (int)x_velocity;
-        //   the_lander.bottom_left.x = the_lander.bottom_left.x + (int)x_velocity;
-        // }
-
-        // // incrementing by 0.5 for  the x_velcoty
-        // if (tick_is_odd && (x_velocity < 1) &&
-        //     (x_velocity > 0.2)) { // if tick_is_odd and the velocity falls in
-        //                           // the correct range, then add to y_velocity
-        //   the_lander.top_left.y = the_lander.top_left.y + (int)y_velocity;
-        //   the_lander.top_right.y = the_lander.top_right.y + (int)y_velocity;
-        //   the_lander.bottom_right.y =
-        //       the_lander.bottom_right.y + (int)y_velocity;
-        //   the_lander.bottom_left.y = the_lander.bottom_left.y + (int)y_velocity;
-        //   the_lander.top_left.x = the_lander.top_left.x + 1;
-        //   the_lander.top_right.x = the_lander.top_right.x + 1;
-        //   the_lander.bottom_right.x = the_lander.bottom_right.x + 1;
-        //   the_lander.bottom_left.x = the_lander.bottom_left.x + 1;
-
-        // } else if (tick_is_odd && (x_velocity > -1) && (x_velocity < -0.2)) {
-        //   the_lander.top_left.y = the_lander.top_left.y + (int)y_velocity;
-        //   the_lander.top_right.y = the_lander.top_right.y + (int)y_velocity;
-        //   the_lander.bottom_right.y =
-        //       the_lander.bottom_right.y + (int)y_velocity;
-        //   the_lander.bottom_left.y = the_lander.bottom_left.y + (int)y_velocity;
-        //   the_lander.top_left.x = the_lander.top_left.x - 1;
-        //   the_lander.top_right.x = the_lander.top_right.x - 1;
-        //   the_lander.bottom_right.x = the_lander.bottom_right.x - 1;
-        //   the_lander.bottom_left.x = the_lander.bottom_left.x - 1;
-
-        // } else {
-        //   the_lander.top_left.y = the_lander.top_left.y + (int)y_velocity;
-        //   the_lander.top_right.y = the_lander.top_right.y + (int)y_velocity;
-        //   the_lander.bottom_right.y =
-        //       the_lander.bottom_right.y + (int)y_velocity;
-        //   the_lander.bottom_left.y = the_lander.bottom_left.y + (int)y_velocity;
-        //   the_lander.top_left.x = the_lander.top_left.x + (int)x_velocity;
-        //   the_lander.top_right.x = the_lander.top_right.x + (int)x_velocity;
-        //   the_lander.bottom_right.x =
-        //       the_lander.bottom_right.x + (int)x_velocity;
-        //   the_lander.bottom_left.x = the_lander.bottom_left.x + (int)x_velocity;
-        // }
-
-        // if statements to turn left
-        // if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
-        //     ((the_lander.angle >= 80) && (the_lander.angle < 100))) {
-        //   the_lander.top_left.x = the_lander.top_left.x + 3;
-        //   the_lander.top_left.y = the_lander.top_left.y - 1;
-        //   the_lander.top_right.x = the_lander.top_right.x + 1;
-        //   the_lander.top_right.y = the_lander.top_right.y + 3;
-        //   the_lander.bottom_right.x = the_lander.bottom_right.x - 3;
-        //   the_lander.bottom_right.y = the_lander.bottom_right.y + 1;
-        //   the_lander.bottom_left.x = the_lander.bottom_left.x - 1;
-        //   the_lander.bottom_left.y = the_lander.bottom_left.y - 3;
-        //   // rotate++;
-        //   lean_right(&the_lander);
-        // } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK)
-        // &&
-        //            ((the_lander.angle >= 60) && (the_lander.angle < 80))) {
-        //   the_lander.top_left.x = the_lander.top_left.x + 2;
-        //   the_lander.top_left.y = the_lander.top_left.y - 1;
-        //   the_lander.top_right.x = the_lander.top_right.x + 1;
-        //   the_lander.top_right.y = the_lander.top_right.y + 2;
-        //   the_lander.bottom_right.x = the_lander.bottom_right.x - 2;
-        //   the_lander.bottom_right.y = the_lander.bottom_right.y + 1;
-        //   the_lander.bottom_left.x = the_lander.bottom_left.x - 1;
-        //   the_lander.bottom_left.y = the_lander.bottom_left.y - 2;
-        //   // rotate++;
-        //   lean_right(&the_lander);
-        // } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK)
-        // &&
-        //            ((the_lander.angle >= 40) && (the_lander.angle < 60))) {
-        //   the_lander.top_left.x = the_lander.top_left.x + 2;
-        //   the_lander.top_left.y = the_lander.top_left.y + 1;
-        //   the_lander.top_right.x = the_lander.top_right.x - 1;
-        //   the_lander.top_right.y = the_lander.top_right.y + 2;
-        //   the_lander.bottom_right.x = the_lander.bottom_right.x - 2;
-        //   the_lander.bottom_right.y = the_lander.bottom_right.y - 1;
-        //   the_lander.bottom_left.x = the_lander.bottom_left.x + 1;
-        //   the_lander.bottom_left.y = the_lander.bottom_left.y - 2;
-        //   // rotate++;
-        //   lean_right(&the_lander);
-        // } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK)
-        // &&
-        //            ((the_lander.angle >= 20) && (the_lander.angle < 40))) {
-        //   the_lander.top_left.x = the_lander.top_left.x + 3;
-        //   the_lander.top_left.y = the_lander.top_left.y + 1;
-        //   the_lander.top_right.x = the_lander.top_right.x - 1;
-        //   the_lander.top_right.y = the_lander.top_right.y + 3;
-        //   the_lander.bottom_right.x = the_lander.bottom_right.x - 3;
-        //   the_lander.bottom_right.y = the_lander.bottom_right.y - 1;
-        //   the_lander.bottom_left.x = the_lander.bottom_left.x + 1;
-        //   the_lander.bottom_left.y = the_lander.bottom_left.y - 3;
-        //   // rotate++;
-        //   lean_right(&the_lander);
-        // } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK)
-        // &&
-        //            ((the_lander.angle >= 100) && (the_lander.angle < 120))) {
-        //   the_lander.top_left.x = the_lander.top_left.x + 1;
-        //   the_lander.top_left.y = the_lander.top_left.y - 3;
-        //   the_lander.top_right.x = the_lander.top_right.x + 3;
-        //   the_lander.top_right.y = the_lander.top_right.y + 1;
-        //   the_lander.bottom_right.x = the_lander.bottom_right.x - 1;
-        //   the_lander.bottom_right.y = the_lander.bottom_right.y + 3;
-        //   the_lander.bottom_left.x = the_lander.bottom_left.x - 3;
-        //   the_lander.bottom_left.y = the_lander.bottom_left.y - 1;
-        //   // rotate++;
-        //   lean_right(&the_lander);
-        // } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK)
-        // &&
-        //            ((the_lander.angle >= 120) && (the_lander.angle < 140))) {
-        //   the_lander.top_left.x = the_lander.top_left.x + 1;
-        //   the_lander.top_left.y = the_lander.top_left.y - 2;
-        //   the_lander.top_right.x = the_lander.top_right.x + 2;
-        //   the_lander.top_right.y = the_lander.top_right.y + 1;
-        //   the_lander.bottom_right.x = the_lander.bottom_right.x - 1;
-        //   the_lander.bottom_right.y = the_lander.bottom_right.y + 2;
-        //   the_lander.bottom_left.x = the_lander.bottom_left.x - 2;
-        //   the_lander.bottom_left.y = the_lander.bottom_left.y - 1;
-        //   // rotate++;
-        //   lean_right(&the_lander);
-        // } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK)
-        // &&
-        //            ((the_lander.angle >= 140) && (the_lander.angle < 160))) {
-        //   the_lander.top_left.x = the_lander.top_left.x - 1;
-        //   the_lander.top_left.y = the_lander.top_left.y - 2;
-        //   the_lander.top_right.x = the_lander.top_right.x + 2;
-        //   the_lander.top_right.y = the_lander.top_right.y - 1;
-        //   the_lander.bottom_right.x = the_lander.bottom_right.x + 1;
-        //   the_lander.bottom_right.y = the_lander.bottom_right.y + 2;
-        //   the_lander.bottom_left.x = the_lander.bottom_left.x - 2;
-        //   the_lander.bottom_left.y = the_lander.bottom_left.y + 1;
-        //   // rotate++;
-        //   lean_right(&the_lander);
-        // } else if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK)
-        // &&
-        //            ((the_lander.angle >= 160) && (the_lander.angle < 180))) {
-        //   the_lander.top_left.x = the_lander.top_left.x - 1;
-        //   the_lander.top_left.y = the_lander.top_left.y - 3;
-        //   the_lander.top_right.x = the_lander.top_right.x + 3;
-        //   the_lander.top_right.y = the_lander.top_right.y - 1;
-        //   the_lander.bottom_right.x = the_lander.bottom_right.x + 1;
-        //   the_lander.bottom_right.y = the_lander.bottom_right.y + 3;
-        //   the_lander.bottom_left.x = the_lander.bottom_left.x - 3;
-        //   the_lander.bottom_left.y = the_lander.bottom_left.y + 1;
-        //   // rotate++;
-        //   lean_right(&the_lander);
-        // }
-
-        // // turn right calculations:
-        // else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
-        //          ((the_lander.angle >= 60) && (the_lander.angle < 80))) {
-        //   the_lander.top_left.x = the_lander.top_left.x - 3;
-        //   the_lander.top_left.y = the_lander.top_left.y + 1;
-        //   the_lander.top_right.x = the_lander.top_right.x - 1;
-        //   the_lander.top_right.y = the_lander.top_right.y - 3;
-        //   the_lander.bottom_right.x = the_lander.bottom_right.x + 3;
-        //   the_lander.bottom_right.y = the_lander.bottom_right.y - 1;
-        //   the_lander.bottom_left.x = the_lander.bottom_left.x + 1;
-        //   the_lander.bottom_left.y = the_lander.bottom_left.y + 3;
-        //   // rotate--;
-        //   lean_left(&the_lander);
-        // } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK)
-        // &&
-        //            ((the_lander.angle >= 40) && (the_lander.angle < 60))) {
-        //   the_lander.top_left.x = the_lander.top_left.x - 2;
-        //   the_lander.top_left.y = the_lander.top_left.y + 1;
-        //   the_lander.top_right.x = the_lander.top_right.x - 1;
-        //   the_lander.top_right.y = the_lander.top_right.y - 2;
-        //   the_lander.bottom_right.x = the_lander.bottom_right.x + 2;
-        //   the_lander.bottom_right.y = the_lander.bottom_right.y - 1;
-        //   the_lander.bottom_left.x = the_lander.bottom_left.x + 1;
-        //   the_lander.bottom_left.y = the_lander.bottom_left.y + 2;
-        //   // rotate--;
-        //   lean_left(&the_lander);
-        // } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK)
-        // &&
-        //            ((the_lander.angle >= 20) && (the_lander.angle < 40))) {
-        //   the_lander.top_left.x = the_lander.top_left.x - 2;
-        //   the_lander.top_left.y = the_lander.top_left.y - 1;
-        //   the_lander.top_right.x = the_lander.top_right.x + 1;
-        //   the_lander.top_right.y = the_lander.top_right.y - 2;
-        //   the_lander.bottom_right.x = the_lander.bottom_right.x + 2;
-        //   the_lander.bottom_right.y = the_lander.bottom_right.y + 1;
-        //   the_lander.bottom_left.x = the_lander.bottom_left.x - 1;
-        //   the_lander.bottom_left.y = the_lander.bottom_left.y + 2;
-        //   // rotate--;
-        //   lean_left(&the_lander);
-        // } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK)
-        // &&
-        //            ((the_lander.angle >= 0) && (the_lander.angle < 20))) {
-        //   the_lander.top_left.x = the_lander.top_left.x - 3;
-        //   the_lander.top_left.y = the_lander.top_left.y - 1;
-        //   the_lander.top_right.x = the_lander.top_right.x + 1;
-        //   the_lander.top_right.y = the_lander.top_right.y - 3;
-        //   the_lander.bottom_right.x = the_lander.bottom_right.x + 3;
-        //   the_lander.bottom_right.y = the_lander.bottom_right.y + 1;
-        //   the_lander.bottom_left.x = the_lander.bottom_left.x - 1;
-        //   the_lander.bottom_left.y = the_lander.bottom_left.y + 3;
-        //   // rotate--;
-        //   lean_left(&the_lander);
-        // } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK)
-        // &&
-        //            ((the_lander.angle >= 80) && (the_lander.angle < 100))) {
-        //   the_lander.top_left.x = the_lander.top_left.x - 1;
-        //   the_lander.top_left.y = the_lander.top_left.y + 3;
-        //   the_lander.top_right.x = the_lander.top_right.x - 3;
-        //   the_lander.top_right.y = the_lander.top_right.y - 1;
-        //   the_lander.bottom_right.x = the_lander.bottom_right.x + 1;
-        //   the_lander.bottom_right.y = the_lander.bottom_right.y - 3;
-        //   the_lander.bottom_left.x = the_lander.bottom_left.x + 3;
-        //   the_lander.bottom_left.y = the_lander.bottom_left.y + 1;
-        //   // rotate--;
-        //   lean_left(&the_lander);
-        // } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK)
-        // &&
-        //            ((the_lander.angle >= 100) && (the_lander.angle < 120))) {
-        //   the_lander.top_left.x = the_lander.top_left.x - 1;
-        //   the_lander.top_left.y = the_lander.top_left.y + 2;
-        //   the_lander.top_right.x = the_lander.top_right.x - 2;
-        //   the_lander.top_right.y = the_lander.top_right.y - 1;
-        //   the_lander.bottom_right.x = the_lander.bottom_right.x + 1;
-        //   the_lander.bottom_right.y = the_lander.bottom_right.y - 2;
-        //   the_lander.bottom_left.x = the_lander.bottom_left.x + 2;
-        //   the_lander.bottom_left.y = the_lander.bottom_left.y + 1;
-        //   // rotate--;
-        //   lean_left(&the_lander);
-        // } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK)
-        // &&
-        //            ((the_lander.angle >= 120) && (the_lander.angle < 140))) {
-        //   the_lander.top_left.x = the_lander.top_left.x + 1;
-        //   the_lander.top_left.y = the_lander.top_left.y + 2;
-        //   the_lander.top_right.x = the_lander.top_right.x - 2;
-        //   the_lander.top_right.y = the_lander.top_right.y + 1;
-        //   the_lander.bottom_right.x = the_lander.bottom_right.x - 1;
-        //   the_lander.bottom_right.y = the_lander.bottom_right.y - 2;
-        //   the_lander.bottom_left.x = the_lander.bottom_left.x + 2;
-        //   the_lander.bottom_left.y = the_lander.bottom_left.y - 1;
-        //   // rotate--;
-        //   lean_left(&the_lander);
-        // } else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK)
-        // &&
-        //            ((the_lander.angle >= 140) && (the_lander.angle < 160))) {
-        //   the_lander.top_left.x = the_lander.top_left.x + 1;
-        //   the_lander.top_left.y = the_lander.top_left.y + 3;
-        //   the_lander.top_right.x = the_lander.top_right.x - 3;
-        //   the_lander.top_right.y = the_lander.top_right.y + 1;
-        //   the_lander.bottom_right.x = the_lander.bottom_right.x - 1;
-        //   the_lander.bottom_right.y = the_lander.bottom_right.y - 3;
-        //   the_lander.bottom_left.x = the_lander.bottom_left.x + 3;
-        //   the_lander.bottom_left.y = the_lander.bottom_left.y - 1;
-        //   // rotate--;
-        //   lean_left(&the_lander);
-        // }
-
-        // draw_lander(&the_lander);
-
-        // offscreen inidication
-
-        // erase the triangle
         if (lastDrawLeft) {
 
           display_fillRect(0, 0, 25, DISPLAY_HEIGHT, DISPLAY_BLACK);
@@ -728,21 +350,14 @@ void gameControl_tick() {
                               30;
           }
 
-          display_fillTriangle(
-              0, (int)the_lander.top_left.y, 15 + (triangle_scalar / 4),
-              (int)the_lander.top_left.y + 5 + triangle_scalar,
-              15 + (triangle_scalar / 4),
-              (int)the_lander.top_left.y - 5 - triangle_scalar, DISPLAY_WHITE);
+          display_fillTriangle(0,
+                              (int)the_lander.top_left.y,
+                               15 + (triangle_scalar / 4),
+                              (int)the_lander.top_left.y + 5 + triangle_scalar,
+                              15 + (triangle_scalar / 4),
+                              (int)the_lander.top_left.y - 5 - triangle_scalar,
+                               DISPLAY_WHITE);
 
-          // display_fillTriangle(5,
-          //                     (int)the_lander.top_left.y,
-          //                     15 ,
-          //                     (int)the_lander.top_left.y + 5,
-          //                     15 ,
-          //                     (int)the_lander.top_left.y - 5,
-          //                     DISPLAY_WHITE);
-
-          // display_fillRect(0, 0, 25, DISPLAY_HEIGHT, DISPLAY_BLACK);
           lastDrawLeft = true;
 
         } else if ((the_lander.top_right.x >= 330) ||
@@ -764,42 +379,29 @@ void gameControl_tick() {
           lastDrawRight = true;
         } else if ((the_lander.top_left.y <= -10) ||
                    (the_lander.bottom_left.y <= -10)) {
-          if (the_lander.top_left.y <= -MAX_OFFSCREEN_CONSTANT + 400) {
-            triangle_scalar = (MAX_OFFSCREEN_CONSTANT - triangle_scalar +
+
+          printf("triangle_scalar %f\t", triangle_scalar);
+          if (the_lander.top_left.y >= -MAX_OFFSCREEN_CONSTANT && 0) {
+            triangle_scalar = (double)(MAX_OFFSCREEN_CONSTANT - triangle_scalar +
                                (int)the_lander.top_left.y) /
-                              30;
+                              50.0;
+          } else {
+            triangle_scalar = 3;
           }
 
-          // display_fillTriangle(0 ,
-          //                     (int)the_lander.top_left.y,
-          //                     15 + (triangle_scalar / 4),
-          //                     (int)the_lander.top_left.y + 5 +
-          //                     triangle_scalar, 15 + (triangle_scalar / 4),
-          //                     (int)the_lander.top_left.y - 5 -
-          //                     triangle_scalar, DISPLAY_WHITE);
-
           display_fillTriangle(
-              (int)the_lander.top_left.x, 0,
-              (int)the_lander.top_left.x - 15 - triangle_scalar,
-              15 - (triangle_scalar / 4),
-              (int)the_lander.top_left.x + 15 + triangle_scalar,
-              15 - (triangle_scalar / 4), DISPLAY_WHITE);
+              (int)the_lander.top_left.x,
+              0,
+              (int)the_lander.top_left.x + 15 - triangle_scalar,
+              18 + (triangle_scalar /4),
+              (int)the_lander.top_left.x - 15 + triangle_scalar,
+              18 + (triangle_scalar /4),
+              DISPLAY_WHITE);
 
+          printf("triangle_scalar %f\t", triangle_scalar);
           lastDrawTop = true;
         }
 
-        // update and erase the box
-        // display_drawLine(the_lander.top_left.x, the_lander.top_left.y,
-        // the_lander.top_right.x, the_lander.top_right.y, DISPLAY_RED);
-        // display_drawLine(the_lander.top_right.x, the_lander.top_right.y,
-        // the_lander.bottom_right.x, the_lander.bottom_right.y, DISPLAY_CYAN);
-        // display_drawLine(the_lander.bottom_right.x,
-        // the_lander.bottom_right.y, the_lander.bottom_left.x,
-        // the_lander.bottom_left.y, DISPLAY_CYAN);
-        // display_drawLine(the_lander.bottom_left.x, the_lander.bottom_left.y,
-        // the_lander.top_left.x, the_lander.top_left.y, DISPLAY_CYAN);
-        // display_drawPixel(the_lander.top_left.x, the_lander.top_left.y,
-        // DISPLAY_YELLOW);
         y_velocity = y_velocity + gravity - (THRUST_SCALER * thrust_y);
         x_velocity = x_velocity + (THRUST_SCALER * thrust_x);
         // map1();
@@ -828,6 +430,7 @@ void gameControl_tick() {
         }
       }
     }
+
     // change thrust value if button 1 is being pressed
     if (((button_value & BUTTONS_BTN1_MASK) == BUTTONS_BTN1_MASK) &&
         the_lander.fuel > 0) {
@@ -837,8 +440,8 @@ void gameControl_tick() {
       thrust_x = 0;
       thrust_y = 0;
     }
-    // helper variable for the speed ranges between 0 and 1
-    third_tick++;
+    
+    
     break;
   // fast delay transition
   case GAMEOVER:

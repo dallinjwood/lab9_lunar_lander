@@ -14,8 +14,8 @@ uint8_t button_value;
 static double cos_degrees(double theta) {
 
   // convert radians to degrees
-
   theta = theta * (3.14 / 180);
+
   // printf("cos_degrees %f\n", cos(theta));
   if (theta == 90) {
     return 0;
@@ -49,7 +49,7 @@ void lander_init(struct lander_t *lander) {
 
   //set intial velocities
   lander->velocity_y = 0.9;
-  lander->velocity_x = -1;
+  lander->velocity_x = -1.0;
 
   //set initial thrust values to 0
   lander->thrust_x = 0;
