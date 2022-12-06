@@ -4,14 +4,14 @@
 #include "lander.h"
 #include "maps.h"
 #include "switches.h"
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
-#include <stdbool.h>
 
 #define THRUST_SCALER 0.1
 #define gravity 0.02
 #define FUEL_TEXT_CURSOR_X 30
-#define FUEL_TEXT_CURSOR_Y 25
+#define FUEL_TEXT_CURSOR_Y 20
 #define FUEL_TEXT "Fuel: "
 #define FUEL_SCALAR 1
 #define MAX_OFFSCREEN_CONSTANT 900
@@ -22,7 +22,6 @@
 #define LEVEL_CURSOR_X 120
 #define LEVEL_CURSOR_Y 100
 #define LEVEL_SIZE 2
-
 
 static bool lastDrawLeft = false;
 static bool lastDrawRight = false;
@@ -653,98 +652,89 @@ void gameControl_tick() {
           // rotate--;
           lean_left(&the_lander);
         }
-      
-      //offscreen inidication
 
-      //erase the triangle
-      if(lastDrawLeft) {
-        
-        display_fillRect(0, 0, 25, DISPLAY_HEIGHT, DISPLAY_BLACK);
-        
-        lastDrawLeft = false;
+        // offscreen inidication
 
-      } else if (lastDrawRight){
-        
-        display_fillRect(DISPLAY_WIDTH - 25, 0, 25, DISPLAY_HEIGHT, DISPLAY_BLACK);
-        
-        lastDrawRight = false;
+        // erase the triangle
+        if (lastDrawLeft) {
 
-      } else if (lastDrawTop){
-        display_fillRect(0,0,DISPLAY_WIDTH, 20, DISPLAY_BLACK);
-        lastDrawTop = false;
-      }
+          display_fillRect(0, 0, 25, DISPLAY_HEIGHT, DISPLAY_BLACK);
 
+          lastDrawLeft = false;
 
-      if ((x0 <= -10) || (x3 <= -10)) {
-        //set triangle scalar
-        if(x0 >= -MAX_OFFSCREEN_CONSTANT){
-          triangle_scalar = (MAX_OFFSCREEN_CONSTANT - triangle_scalar + (int) x0) / 30 ;
+        } else if (lastDrawRight) {
+
+          display_fillRect(DISPLAY_WIDTH - 25, 0, 25, DISPLAY_HEIGHT,
+                           DISPLAY_BLACK);
+
+          lastDrawRight = false;
+
+        } else if (lastDrawTop) {
+          display_fillRect(0, 0, DISPLAY_WIDTH, 20, DISPLAY_BLACK);
+          lastDrawTop = false;
         }
 
-        display_fillTriangle(0 ,
-                            (int)y_point0,
-                            15 + (triangle_scalar / 4),
-                            (int)y_point0 + 5 + triangle_scalar,
-                            15 + (triangle_scalar / 4),
-                            (int)y_point0 - 5 - triangle_scalar,
-                            DISPLAY_WHITE);
+        if ((x0 <= -10) || (x3 <= -10)) {
+          // set triangle scalar
+          if (x0 >= -MAX_OFFSCREEN_CONSTANT) {
+            triangle_scalar =
+                (MAX_OFFSCREEN_CONSTANT - triangle_scalar + (int)x0) / 30;
+          }
 
-        // display_fillTriangle(5,
-        //                     (int)y_point0,
-        //                     15 ,
-        //                     (int)y_point0 + 5,
-        //                     15 ,
-        //                     (int)y_point0 - 5,
-        //                     DISPLAY_WHITE);
+          display_fillTriangle(
+              0, (int)y_point0, 15 + (triangle_scalar / 4),
+              (int)y_point0 + 5 + triangle_scalar, 15 + (triangle_scalar / 4),
+              (int)y_point0 - 5 - triangle_scalar, DISPLAY_WHITE);
 
+          // display_fillTriangle(5,
+          //                     (int)y_point0,
+          //                     15 ,
+          //                     (int)y_point0 + 5,
+          //                     15 ,
+          //                     (int)y_point0 - 5,
+          //                     DISPLAY_WHITE);
 
-        // display_fillRect(0, 0, 25, DISPLAY_HEIGHT, DISPLAY_BLACK);
-      lastDrawLeft = true;
-        
-      } else if ((x1 >= 330) || (x2 >= 330)) {
-        //set triangle scalar
-        if(x0 <= MAX_OFFSCREEN_CONSTANT){
-          triangle_scalar = (MAX_OFFSCREEN_CONSTANT + triangle_scalar - (int) x0) / 30 ;
+          // display_fillRect(0, 0, 25, DISPLAY_HEIGHT, DISPLAY_BLACK);
+          lastDrawLeft = true;
+
+        } else if ((x1 >= 330) || (x2 >= 330)) {
+          // set triangle scalar
+          if (x0 <= MAX_OFFSCREEN_CONSTANT) {
+            triangle_scalar =
+                (MAX_OFFSCREEN_CONSTANT + triangle_scalar - (int)x0) / 30;
+          }
+
+          display_fillTriangle(DISPLAY_WIDTH, (int)y_point0,
+                               DISPLAY_WIDTH - 15 - (triangle_scalar / 4),
+                               (int)y_point0 - 5 - triangle_scalar,
+                               DISPLAY_WIDTH - 15 - (triangle_scalar / 4),
+                               (int)y_point0 + 5 + triangle_scalar,
+                               DISPLAY_WHITE);
+
+          lastDrawRight = true;
+        } else if ((y_point0 <= -10) || (y3 <= -10)) {
+          if (y_point0 <= -MAX_OFFSCREEN_CONSTANT + 400) {
+            triangle_scalar =
+                (MAX_OFFSCREEN_CONSTANT - triangle_scalar + (int)y_point0) / 30;
+          }
+
+          // display_fillTriangle(0 ,
+          //                     (int)y_point0,
+          //                     15 + (triangle_scalar / 4),
+          //                     (int)y_point0 + 5 + triangle_scalar,
+          //                     15 + (triangle_scalar / 4),
+          //                     (int)y_point0 - 5 - triangle_scalar,
+          //                     DISPLAY_WHITE);
+
+          display_fillTriangle((int)x0, 0, (int)x0 - 15 - triangle_scalar,
+                               15 - (triangle_scalar / 4),
+                               (int)x0 + 15 + triangle_scalar,
+                               15 - (triangle_scalar / 4), DISPLAY_WHITE);
+
+          lastDrawTop = true;
         }
 
-        display_fillTriangle(DISPLAY_WIDTH ,
-                            (int)y_point0,
-                            DISPLAY_WIDTH - 15 - (triangle_scalar / 4),
-                            (int)y_point0 - 5 - triangle_scalar,
-                            DISPLAY_WIDTH - 15 - (triangle_scalar / 4),
-                            (int)y_point0 + 5 + triangle_scalar,
-                            DISPLAY_WHITE);
-
-        lastDrawRight = true;
-      } else if((y_point0 <= -10) || (y3 <= -10)){
-        if(y_point0 <= -MAX_OFFSCREEN_CONSTANT + 400){
-           triangle_scalar = (MAX_OFFSCREEN_CONSTANT - triangle_scalar + (int) y_point0) / 30 ;
-        }
-
-        // display_fillTriangle(0 ,
-        //                     (int)y_point0,
-        //                     15 + (triangle_scalar / 4),
-        //                     (int)y_point0 + 5 + triangle_scalar,
-        //                     15 + (triangle_scalar / 4),
-        //                     (int)y_point0 - 5 - triangle_scalar,
-        //                     DISPLAY_WHITE);
-
-        display_fillTriangle((int)x0,
-                          0,
-                          (int)x0 - 15 - triangle_scalar ,
-                          15 - (triangle_scalar / 4),
-                          (int)x0 + 15 + triangle_scalar,
-                          15 - (triangle_scalar / 4),
-                          DISPLAY_WHITE);
-        
-        lastDrawTop = true;
-      }
-
-      
-      
-      
-
-        //update and erase the box
+        // update and erase the box
         display_drawLine(x0, y_point0, x1, y_point1, DISPLAY_RED);
         display_drawLine(x1, y_point1, x2, y2, DISPLAY_CYAN);
         display_drawLine(x2, y2, x3, y3, DISPLAY_CYAN);
