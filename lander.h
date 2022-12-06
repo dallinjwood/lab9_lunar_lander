@@ -6,9 +6,11 @@
 #include "math.h"
 #include <stdbool.h>
 #include <stdio.h>
+#include "config.h"
 
 struct lander_t {
   double angle;
+  int8_t position;
   display_point_t top_left;
   display_point_t top_right;
   display_point_t bottom_right;
@@ -33,10 +35,28 @@ void lean_left(struct lander_t *lander);
 // decrement the angle
 void lean_right(struct lander_t *lander);
 
-void thrust(struct lander_t *lander);
+void set_position(struct lander_t *lander);
+
+int8_t get_position(struct lander_t *lander);
 
 void draw_lander(struct lander_t *lander);
 
-display_point_t get_location();
+void draw_lander_pos_Neg4(struct lander_t *lander, bool erase);
+
+void draw_lander_pos_Neg3(struct lander_t *lander, bool erase);
+
+void draw_lander_pos_Neg2(struct lander_t *lander, bool erase);
+
+void draw_lander_pos_Neg1(struct lander_t *lander, bool erase);
+
+void draw_lander_pos_0(struct lander_t *lander, bool erase);
+
+void draw_lander_pos_1(struct lander_t *lander, bool erase);
+
+void draw_lander_pos_2(struct lander_t *lander, bool erase);
+
+void draw_lander_pos_3(struct lander_t *lander, bool erase);
+
+void draw_lander_pos_4(struct lander_t *lander, bool erase);
 
 #endif /* LANDER */

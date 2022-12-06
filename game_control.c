@@ -33,6 +33,9 @@ double thrust_y = 0.;
 
 struct lander_t the_lander;
 
+//TEST DRAWING LANDER TODO
+struct lander_t other_lander;
+
 void gameControl_init_next_level() {
   x0 = 320;
   y_point0 = 0;
@@ -53,6 +56,8 @@ void gameControl_init() {
   // initialize the lander
   lander_init(&the_lander);
 
+  
+
   display_fillScreen(DISPLAY_BLACK);
   buttons_init();
   display_drawLine(x0, y_point0, x1, y_point1, DISPLAY_GREEN);
@@ -60,12 +65,16 @@ void gameControl_init() {
   display_drawLine(x2, y2, x3, y3, DISPLAY_CYAN);
   display_drawLine(x3, y3, x0, y_point0, DISPLAY_CYAN);
   display_drawPixel(x0, y_point0, DISPLAY_DARK_GREEN);
+
+  //TEST DRAWING TODO
+  lander_init(&other_lander);
 }
 
 // Tick the game control logic
 //
 // This function should tick the lander and check for wins on the game
 void gameControl_tick() {
+  draw_lander_pos_Neg2(&other_lander, false);
   // if (tick_is_odd) {
   //   velocity = velocity + gravity;
   // }
@@ -223,7 +232,7 @@ void gameControl_tick() {
         x3 = x3 + (int)x_velocity;
       }
 
-      // if statements to turn left
+      // if statements to turn right
       if (((button_value & BUTTONS_BTN0_MASK) == BUTTONS_BTN0_MASK) &&
           ((the_lander.angle >= 80) && (the_lander.angle <= 100))) {
         x0 = x0 + 3;
@@ -322,7 +331,7 @@ void gameControl_tick() {
         lean_right(&the_lander);
       }
 
-      // turn right calculations:
+      // turn left calculations:
       else if (((button_value & BUTTONS_BTN3_MASK) == BUTTONS_BTN3_MASK) &&
                ((the_lander.angle >= 60) && (the_lander.angle < 80))) {
         x0 = x0 - 3;
