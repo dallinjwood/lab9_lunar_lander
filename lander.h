@@ -11,6 +11,7 @@
 struct lander_t {
   double angle;
   int8_t position;
+  int16_t fuel;
   display_point_t top_left;
   display_point_t top_right;
   display_point_t bottom_right;
