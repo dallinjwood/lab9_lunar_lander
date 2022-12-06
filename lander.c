@@ -1808,10 +1808,7 @@ void draw_lander_pos_4(struct lander_t *lander, bool erase) {
     display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_9, LANDER_BLACK);
     display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_9, LANDER_BLACK);
     display_drawPixel(lander->bottom_left.x + P_5, lander->bottom_left.y + P_9, LANDER_BLACK);
-    display_drawPixel(lander->bottom_left.x + P_6, lander->bottom_left.y + P_9, LANDER_DARK_GRAY);
-
-
-
+    display_drawPixel(lander->bottom_left.x + P_6, lander->bottom_left.y + P_9, LANDER_BLACK);
   }
 
   //Draw
@@ -1916,11 +1913,444 @@ void draw_lander_pos_4(struct lander_t *lander, bool erase) {
 void draw_lander_fire(struct lander_t *lander, bool erase) {
 
   //This bool will change each call to this function
-  static bool flicker = false;
+  static uint64_t flicker = 0;
 
   //Check position of lander, then draw fire accordingly relative to the expected critical points
+  if (get_position(lander) == POS_NEG4) {
 
+    if(erase) {
+    //Erase last fire
+    //Main flame
+    display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x + P_0, lander->bottom_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x + P_0, lander->bottom_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x + P_0, lander->bottom_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x + P_0, lander->bottom_right.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x + P_1, lander->bottom_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x + P_1, lander->bottom_right.y + P_5, LANDER_BLACK);
+    //Inner Flame
+    display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_5, LANDER_BLACK);
+    //Flicker flame
+    display_drawPixel(lander->bottom_right.x + P_2, lander->bottom_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x + P_2, lander->bottom_right.y + P_5, LANDER_BLACK);
+    }
 
+    else {
+    //Draw fire
+    //Main 
+    display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_3, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_4, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_7, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_8, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x + P_0, lander->bottom_right.y + P_4, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x + P_0, lander->bottom_right.y + P_5, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x + P_0, lander->bottom_right.y + P_6, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x + P_0, lander->bottom_right.y + P_7, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x + P_1, lander->bottom_right.y + P_4, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x + P_1, lander->bottom_right.y + P_5, LANDER_MAGENTA);
+    //Inner Flame
+    display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_4, LANDER_BLUE);
+    display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_5, LANDER_BLUE);
+
+    //Flicker flame
+      if ((flicker%P_10 > P_5)) {
+        display_drawPixel(lander->bottom_right.x + P_2, lander->bottom_right.y + P_4, LANDER_MAGENTA);
+        display_drawPixel(lander->bottom_right.x - P_0, lander->bottom_right.y + P_4, LANDER_BLUE);
+        display_drawPixel(lander->bottom_right.x - P_0, lander->bottom_right.y + P_5, LANDER_BLUE);
+      }
+      else {
+        display_drawPixel(lander->bottom_right.x + P_2, lander->bottom_right.y + P_5, LANDER_MAGENTA);
+      }
+    }
+  }
+  else if (get_position(lander) == POS_NEG3) {
+    if(erase) {
+    //Erase last fire
+    //Main flame
+    display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x + P_0, lander->bottom_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x + P_0, lander->bottom_right.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x + P_0, lander->bottom_right.y + P_5, LANDER_BLACK);
+    //Inner Flame
+    display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_4, LANDER_BLACK);
+    //Flicker flame
+    display_drawPixel(lander->bottom_right.x + P_0, lander->bottom_right.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x + P_1, lander->bottom_right.y + P_5, LANDER_BLACK);
+    }
+
+    else {
+    //Draw fire
+    //Main 
+    display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_6, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_7, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_2, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_3, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_5, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_6, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x + P_0, lander->bottom_right.y + P_3, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x + P_0, lander->bottom_right.y + P_4, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x + P_0, lander->bottom_right.y + P_5, LANDER_MAGENTA);
+    //Inner Flame
+    display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_5, LANDER_BLUE);
+    display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_4, LANDER_BLUE);
+
+    //Flicker flame
+      if ((flicker%P_10 > P_5)) {
+        display_drawPixel(lander->bottom_right.x + P_0, lander->bottom_right.y + P_6, LANDER_MAGENTA);
+        display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_5, LANDER_BLUE);
+        display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_4, LANDER_BLUE);
+      }
+      else {
+        display_drawPixel(lander->bottom_right.x + P_1, lander->bottom_right.y + P_5, LANDER_MAGENTA);
+      }
+    }
+  }
+  else if (get_position(lander) == POS_NEG2) {
+    if(erase) {
+    //Erase last fire
+    //Main flame
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_1, LANDER_BLACK);
+    //Inner Flame
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_2, LANDER_BLACK);
+    //Flicker flame
+    display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_3, LANDER_BLACK);
+    }
+
+    else {
+    //Draw fire
+    //Main 
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_3, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_2, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_3, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_1, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_2, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_1, LANDER_MAGENTA);
+    //Inner Flame
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_1, LANDER_BLUE);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_2, LANDER_BLUE);
+
+    //Flicker flame
+      if ((flicker%P_10 > P_5)) {
+        display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_2, LANDER_MAGENTA);
+        display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_1, LANDER_BLUE);
+        display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_2, LANDER_BLUE);
+      }
+      else {
+        display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_3, LANDER_MAGENTA);
+      }
+    }
+  }
+  else if (get_position(lander) == POS_NEG1) {
+    if(erase) {
+    //Erase last fire
+    //Main flame
+    display_drawPixel(lander->bottom_right.x - P_7, lander->bottom_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_6, lander->bottom_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_6, lander->bottom_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_0, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_0, LANDER_BLACK);
+    //Inner Flame
+    display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_0, LANDER_BLACK);
+    //Flicker flame
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_2, LANDER_BLACK);
+    }
+
+    else {
+    //Draw fire
+    //Main 
+    display_drawPixel(lander->bottom_right.x - P_7, lander->bottom_right.y + P_1, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x - P_6, lander->bottom_right.y + P_1, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x - P_6, lander->bottom_right.y + P_2, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y + P_2, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_1, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_2, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_0, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_1, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_2, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_0, LANDER_MAGENTA);
+    //Inner Flame
+    display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y + P_1, LANDER_BLUE);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_0, LANDER_BLUE);
+
+    //Flicker flame
+      if ((flicker%P_10 > P_5)) {
+        display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_3, LANDER_MAGENTA);
+        display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_1, LANDER_BLUE);
+        display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_2, LANDER_BLUE);
+      }
+      else {
+        display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_2, LANDER_MAGENTA);
+      }
+    }  
+  }
+  else if (get_position(lander) == POS_0) {
+
+    if(erase) {
+    //Erase last fire
+    //Main flame
+    display_drawPixel(lander->bottom_right.x - P_7, lander->bottom_right.y - P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_6, lander->bottom_right.y - P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y - P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y - P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_6, lander->bottom_right.y - P_0, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y - P_0, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y - P_0, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y - P_0, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_1, LANDER_BLACK);
+    //Inner Flame
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y - P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y - P_1, LANDER_BLACK);
+    //Flicker flame
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y + P_2, LANDER_BLACK);
+    }
+
+    else {
+    //Draw fire
+    //Main flame
+    display_drawPixel(lander->bottom_right.x - P_7, lander->bottom_right.y - P_1, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x - P_6, lander->bottom_right.y - P_1, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y - P_1, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y - P_1, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x - P_6, lander->bottom_right.y - P_0, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y - P_0, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y - P_0, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y - P_0, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y + P_1, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_1, LANDER_MAGENTA);
+    //Inner Flame
+    display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y - P_1, LANDER_BLUE);
+    display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y - P_1, LANDER_BLUE);
+
+    //Flicker flame
+      if ((flicker%P_10 > P_5)) {
+        display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_2, LANDER_MAGENTA);
+        display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y - P_0, LANDER_BLUE);
+        display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y - P_0, LANDER_BLUE);
+      }
+      else {
+        display_drawPixel(lander->bottom_right.x - P_5, lander->bottom_right.y + P_2, LANDER_MAGENTA);
+      }
+    }
+      
+  }
+  else if (get_position(lander) == POS_1) {
+     if(erase) {
+    //Erase last fire
+    //Main flame
+    display_drawPixel(lander->bottom_left.x + P_7, lander->bottom_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_6, lander->bottom_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_6, lander->bottom_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_5, lander->bottom_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_0, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_0, LANDER_BLACK);
+    //Inner Flame
+    display_drawPixel(lander->bottom_left.x + P_5, lander->bottom_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_0, LANDER_BLACK);
+    //Flicker flame
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_2, LANDER_BLACK);
+    }
+
+    else {
+    //Draw fire
+    //Main 
+    display_drawPixel(lander->bottom_left.x + P_7, lander->bottom_left.y + P_1, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_left.x + P_6, lander->bottom_left.y + P_1, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_left.x + P_6, lander->bottom_left.y + P_2, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_left.x + P_5, lander->bottom_left.y + P_2, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_1, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_2, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_0, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_1, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_2, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_0, LANDER_MAGENTA);
+    //Inner Flame
+    display_drawPixel(lander->bottom_left.x + P_5, lander->bottom_left.y + P_1, LANDER_BLUE);
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_0, LANDER_BLUE);
+
+    //Flicker flame
+      if ((flicker%P_10 > P_5)) {
+        display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_3, LANDER_MAGENTA);
+        display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_1, LANDER_BLUE);
+        display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_2, LANDER_BLUE);
+      }
+      else {
+        display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_2, LANDER_MAGENTA);
+      }
+    } 
+  }
+  else if (get_position(lander) == POS_2) {
+     if(erase) {
+    //Erase last fire
+    //Main flame
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_1, LANDER_BLACK);
+    //Inner Flame
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_1, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_2, LANDER_BLACK);
+    //Flicker flame
+    display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_3, LANDER_BLACK);
+    }
+
+    else {
+    //Draw fire
+    //Main 
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_3, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_2, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_3, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_1, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_2, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_1, LANDER_MAGENTA);
+    //Inner Flame
+    display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_1, LANDER_BLUE);
+    display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_2, LANDER_BLUE);
+
+    //Flicker flame
+      if ((flicker%P_10 > P_5)) {
+        display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_2, LANDER_MAGENTA);
+        display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_1, LANDER_BLUE);
+        display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_2, LANDER_BLUE);
+      }
+      else {
+        display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_3, LANDER_MAGENTA);
+      }
+    } 
+  }
+  else if (get_position(lander) == POS_3) {
+   if(erase) {
+    //Erase last fire
+    //Main flame
+    display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_2, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x - P_0, lander->bottom_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x - P_0, lander->bottom_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x - P_0, lander->bottom_left.y + P_5, LANDER_BLACK);
+    //Inner Flame
+    display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_4, LANDER_BLACK);
+    //Flicker flame
+    display_drawPixel(lander->bottom_left.x - P_0, lander->bottom_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x - P_1, lander->bottom_left.y + P_5, LANDER_BLACK);
+    }
+
+    else {
+    //Draw fire
+    //Main 
+    display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_6, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_7, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_2, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_3, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_5, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_6, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_left.x - P_0, lander->bottom_left.y + P_3, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_left.x - P_0, lander->bottom_left.y + P_4, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_left.x - P_0, lander->bottom_left.y + P_5, LANDER_MAGENTA);
+    //Inner Flame
+    display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_5, LANDER_BLUE);
+    display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_4, LANDER_BLUE);
+
+    //Flicker flame
+      if ((flicker%P_10 > P_5)) {
+        display_drawPixel(lander->bottom_left.x - P_0, lander->bottom_left.y + P_6, LANDER_MAGENTA);
+        display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_5, LANDER_BLUE);
+        display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_4, LANDER_BLUE);
+      }
+      else {
+        display_drawPixel(lander->bottom_left.x - P_1, lander->bottom_left.y + P_5, LANDER_MAGENTA);
+      }
+    }   
+  }
+  else if (get_position(lander) == POS_4) {
+    if(erase) {
+    //Erase last fire
+    //Main flame
+    display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_3, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_8, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x - P_0, lander->bottom_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x - P_0, lander->bottom_left.y + P_5, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x - P_0, lander->bottom_left.y + P_6, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x - P_0, lander->bottom_left.y + P_7, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x - P_1, lander->bottom_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x - P_1, lander->bottom_left.y + P_5, LANDER_BLACK);
+    //Inner Flame
+    display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_5, LANDER_BLACK);
+    //Flicker flame
+    display_drawPixel(lander->bottom_left.x - P_2, lander->bottom_left.y + P_4, LANDER_BLACK);
+    display_drawPixel(lander->bottom_left.x - P_2, lander->bottom_left.y + P_5, LANDER_BLACK);
+    }
+
+    else {
+    //Draw fire
+    //Main 
+    display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_3, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_4, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_7, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_8, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_left.x - P_0, lander->bottom_left.y + P_4, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_left.x - P_0, lander->bottom_left.y + P_5, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_left.x - P_0, lander->bottom_left.y + P_6, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_left.x - P_0, lander->bottom_left.y + P_7, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_left.x - P_1, lander->bottom_left.y + P_4, LANDER_MAGENTA);
+    display_drawPixel(lander->bottom_left.x - P_1, lander->bottom_left.y + P_5, LANDER_MAGENTA);
+    //Inner Flame
+    display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_4, LANDER_BLUE);
+    display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_5, LANDER_BLUE);
+
+    //Flicker flame
+      if ((flicker%P_10 > P_5)) {
+        display_drawPixel(lander->bottom_left.x - P_2, lander->bottom_left.y + P_4, LANDER_MAGENTA);
+        display_drawPixel(lander->bottom_left.x + P_0, lander->bottom_left.y + P_4, LANDER_BLUE);
+        display_drawPixel(lander->bottom_left.x + P_0, lander->bottom_left.y + P_5, LANDER_BLUE);
+      }
+      else {
+        display_drawPixel(lander->bottom_left.x - P_2, lander->bottom_left.y + P_5, LANDER_MAGENTA);
+      }
+    }
+  }
+
+  flicker++;
 }
 
 //Set position based on angle ranges, as well as the 4 critical points
@@ -2292,34 +2722,43 @@ void draw_lander(struct lander_t *lander) {
     }
   }
 
-  //Otherwise, draw lander without fire
+  //Otherwise, erase lander without fire
   else {
     if (get_position(lander) == POS_NEG4) {
       draw_lander_pos_Neg4(lander, erase);
+      draw_lander_fire(lander, erase);
     }
     else if (get_position(lander) == POS_NEG3) {
       draw_lander_pos_Neg3(lander, erase);
+      draw_lander_fire(lander, erase);
     }
     else if (get_position(lander) == POS_NEG2) {
       draw_lander_pos_Neg2(lander, erase);
+      draw_lander_fire(lander, erase);
     }
     else if (get_position(lander) == POS_NEG1) {
       draw_lander_pos_Neg1(lander, erase);
+      draw_lander_fire(lander, erase);
     }
     else if (get_position(lander) == POS_0) {
       draw_lander_pos_0(lander, erase);
+      draw_lander_fire(lander, erase);
     }
     else if (get_position(lander) == POS_1) {
       draw_lander_pos_1(lander, erase);
+      draw_lander_fire(lander, erase);
     }
     else if (get_position(lander) == POS_2) {
       draw_lander_pos_2(lander, erase);
+      draw_lander_fire(lander, erase);
     }
     else if (get_position(lander) == POS_3) {
       draw_lander_pos_3(lander, erase);
+      draw_lander_fire(lander, erase);
     }
     else if (get_position(lander) == POS_4) {
       draw_lander_pos_4(lander, erase);
+      draw_lander_fire(lander, erase);
     }
   }
 
