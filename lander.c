@@ -2,6 +2,7 @@
 
 static bool tick_is_odd = true;
 static uint64_t third_tick = 0;
+static uint8_t fireColor = 0;
 
 uint8_t button_value;
 
@@ -82,6 +83,30 @@ void lean_right(struct lander_t *lander) {
     lander->angle -= 20;
   }
 }
+
+//draw explosion effect
+void draw_explosion(struct lander_t *lander){
+  for(uint8_t i = 0; i < 200; i++){
+    fireColor = i % 20;
+    if(i % 2){
+      if(fireColor > 10){
+      display_fillCircle((lander->top_left.x + lander->bottom_left.x) / 2,
+                          (lander->top_left.y + lander->bottom_left.y)/2,
+                          i/5, DISPLAY_YELLOW);
+      } else {
+        display_fillCircle((lander->top_left.x + lander->bottom_left.x) / 2,
+                          (lander->top_left.y + lander->bottom_left.y)/2,
+                          i/5, DISPLAY_RED);
+      // }else if(fireColor == 2){
+      //   display_fillCircle((lander->top_left.x + lander->bottom_left.x) / 2,
+      //                     (lander->top_left.y + lander->bottom_left.y)/2,
+      //                      i/4, DISPLAY_DARK_RED);
+    }
+    }
+  }
+}
+
+
 
 void draw_lander_pos_Neg4(struct lander_t *lander, bool erase) {
 
@@ -3007,4 +3032,3 @@ void draw_lander(struct lander_t *lander) {
   third_tick++;
   tick_is_odd = !tick_is_odd;
 }
-
