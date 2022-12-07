@@ -55,7 +55,7 @@ void lander_init(struct lander_t *lander) {
   lander->thrust_x = 0;
   lander->thrust_y = 0;
   
-  lander->fuel = 10000;
+  lander->fuel = 1000;
 
   printf("angle: %f\n", lander->angle);
 }
@@ -1941,6 +1941,9 @@ void draw_lander_fire(struct lander_t *lander, bool erase) {
 
     else {
     //Draw fire
+    if (lander->fuel <= 0) {
+    return;
+    }
     //Main 
     display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_3, LANDER_MAGENTA);
     display_drawPixel(lander->bottom_right.x - P_1, lander->bottom_right.y + P_4, LANDER_MAGENTA);
@@ -1990,6 +1993,9 @@ void draw_lander_fire(struct lander_t *lander, bool erase) {
 
     else {
     //Draw fire
+    if (lander->fuel <= 0) {
+      return;
+    }
     //Main 
     display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_6, LANDER_MAGENTA);
     display_drawPixel(lander->bottom_right.x - P_2, lander->bottom_right.y + P_7, LANDER_MAGENTA);
@@ -2035,6 +2041,9 @@ void draw_lander_fire(struct lander_t *lander, bool erase) {
 
     else {
     //Draw fire
+    if (lander->fuel <= 0) {
+      return;
+    }
     //Main 
     display_drawPixel(lander->bottom_right.x - P_4, lander->bottom_right.y + P_3, LANDER_MAGENTA);
     display_drawPixel(lander->bottom_right.x - P_3, lander->bottom_right.y + P_2, LANDER_MAGENTA);
@@ -2081,6 +2090,9 @@ void draw_lander_fire(struct lander_t *lander, bool erase) {
 
     else {
     //Draw fire
+    if (lander->fuel <= 0) {
+      return;
+    }
     //Main 
     display_drawPixel(lander->bottom_right.x - P_7, lander->bottom_right.y + P_1, LANDER_MAGENTA);
     display_drawPixel(lander->bottom_right.x - P_6, lander->bottom_right.y + P_1, LANDER_MAGENTA);
@@ -2132,6 +2144,9 @@ void draw_lander_fire(struct lander_t *lander, bool erase) {
 
     else {
     //Draw fire
+    if (lander->fuel <= 0) {
+      return;
+    }
     //Main flame
     display_drawPixel(lander->bottom_right.x - P_7, lander->bottom_right.y - P_1, LANDER_MAGENTA);
     display_drawPixel(lander->bottom_right.x - P_6, lander->bottom_right.y - P_1, LANDER_MAGENTA);
@@ -2183,6 +2198,9 @@ void draw_lander_fire(struct lander_t *lander, bool erase) {
 
     else {
     //Draw fire
+    if (lander->fuel <= 0) {
+      return;
+    }
     //Main 
     display_drawPixel(lander->bottom_left.x + P_7, lander->bottom_left.y + P_1, LANDER_MAGENTA);
     display_drawPixel(lander->bottom_left.x + P_6, lander->bottom_left.y + P_1, LANDER_MAGENTA);
@@ -2229,6 +2247,9 @@ void draw_lander_fire(struct lander_t *lander, bool erase) {
 
     else {
     //Draw fire
+    if (lander->fuel <= 0) {
+      return;
+    }
     //Main 
     display_drawPixel(lander->bottom_left.x + P_4, lander->bottom_left.y + P_3, LANDER_MAGENTA);
     display_drawPixel(lander->bottom_left.x + P_3, lander->bottom_left.y + P_2, LANDER_MAGENTA);
@@ -2274,6 +2295,9 @@ void draw_lander_fire(struct lander_t *lander, bool erase) {
 
     else {
     //Draw fire
+    if (lander->fuel <= 0) {
+      return;
+    }
     //Main 
     display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_6, LANDER_MAGENTA);
     display_drawPixel(lander->bottom_left.x + P_2, lander->bottom_left.y + P_7, LANDER_MAGENTA);
@@ -2323,6 +2347,9 @@ void draw_lander_fire(struct lander_t *lander, bool erase) {
 
     else {
     //Draw fire
+    if (lander->fuel <= 0) {
+      return;
+    }
     //Main 
     display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_3, LANDER_MAGENTA);
     display_drawPixel(lander->bottom_left.x + P_1, lander->bottom_left.y + P_4, LANDER_MAGENTA);

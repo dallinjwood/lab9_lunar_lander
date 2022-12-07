@@ -76,4 +76,7 @@
 #define LANDER_MAGENTA      DISPLAY_MAGENTA
 #define LANDER_RED          DISPLAY_RED
 
+//Stars
+#define STAR_NUM 5
+
 #endif /* CONFIG */
