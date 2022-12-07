@@ -31,6 +31,7 @@ struct lander_t {
 
 };
 
+void draw_explosion(struct lander_t *lander);
 
 void lander_init(struct lander_t *lander);
 

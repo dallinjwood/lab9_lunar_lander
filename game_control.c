@@ -173,6 +173,9 @@ void gameControl_tick() {
         currentState = TRANSITION;
         display_fillScreen(DISPLAY_BLACK);
       } else if (!win_control) {
+        //draw explosion
+        draw_explosion(&the_lander);
+
         currentState = GAMEOVER;
         gameover_control = false;
         win_control = false;
@@ -282,25 +285,55 @@ void gameControl_tick() {
     display_setCursor(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y);
 
     uint8_t button_value = buttons_read();
+    
+      display_drawRoundRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y + 10,
+                            101, 10, 2, DISPLAY_WHITE);
 
     // change fuel text color based in how much fuel is left
     if (the_lander.fuel > 500) {
-      display_drawRoundRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y + 10,
+                            
+      display_fillRoundRect(FUEL_TEXT_CURSOR_X + 35 + the_lander.fuel / 10,
+                            FUEL_TEXT_CURSOR_Y + 10,
+                            1,
+                            10,
+                            2,
+                            DISPLAY_BLACK);
+      display_fillRoundRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y + 10,
                             the_lander.fuel / 10, 10, 2, DISPLAY_WHITE);
+
+      //display fuel number
       display_fillRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y, 30, 10,
                        DISPLAY_BLACK);
       display_printDecimalInt(the_lander.fuel);
     } else if (the_lander.fuel > 300 && the_lander.fuel <= 500) {
-      display_drawRoundRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y + 10,
+      display_fillRoundRect(FUEL_TEXT_CURSOR_X + 35 + the_lander.fuel / 10,
+                            FUEL_TEXT_CURSOR_Y + 10,
+                            1,
+                            10,
+                            2,
+                            DISPLAY_BLACK);
+
+      display_fillRoundRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y + 10,
                             the_lander.fuel / 10, 10, 2, DISPLAY_YELLOW);
+
+      //display fuel number
       display_setTextColor(DISPLAY_YELLOW);
       display_fillRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y, 30, 10,
                        DISPLAY_BLACK);
       display_printDecimalInt(the_lander.fuel);
 
     } else if (the_lander.fuel >= 0 && the_lander.fuel <= 300) {
-      display_drawRoundRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y + 10,
+      display_fillRoundRect(FUEL_TEXT_CURSOR_X + 35 + the_lander.fuel / 10,
+                            FUEL_TEXT_CURSOR_Y + 10,
+                            1,
+                            10,
+                            2,
+                            DISPLAY_BLACK);
+
+      display_fillRoundRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y + 10,
                             the_lander.fuel / 10, 10, 2, DISPLAY_RED);
+
+      //display fuel number
       display_setTextColor(DISPLAY_RED);
       display_fillRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y, 30, 10,
                        DISPLAY_BLACK);
