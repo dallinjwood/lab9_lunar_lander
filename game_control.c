@@ -8,7 +8,6 @@
 #include <stdint.h>
 #include <stdio.h>
 
-
 #define FUEL_TEXT_CURSOR_X 30
 #define FUEL_TEXT_CURSOR_Y 20
 #define FUEL_TEXT "Fuel: "
@@ -26,7 +25,7 @@ static bool lastDrawLeft = false;
 static bool lastDrawRight = false;
 static bool lastDrawTop = false;
 static long double triangle_scalar = 1;
-static int16_t level = 1;
+static int16_t level = 4;
 static double y_velocity = 0.9;
 static double x_velocity = -1;
 static bool tick_is_odd = true;
@@ -113,6 +112,12 @@ void gameControl_tick() {
     break;
   // transition state  transitions
   case TRANSITION:
+    if ((led_value & SWITCHES_SW0_MASK) != SWITCHES_SW0_MASK) {
+      currentState = MENU;
+      gameControl_init(TICK_PERIOD);
+      announcement_drawn = false;
+      level = 1;
+    }
     if (transition_cnt == transition_num_ticks) {
       transition_cnt = 0;
       currentState = GAMEPLAY;
@@ -123,6 +128,7 @@ void gameControl_tick() {
         display_setTextColor(DISPLAY_BLACK);
         display_println("Level 1");
         announcement_drawn = false;
+        lander_init(&the_lander);
         map1();
       } else if ((level == 2) && (announcement_drawn)) {
         // erase level announcement
@@ -142,27 +148,45 @@ void gameControl_tick() {
         announcement_drawn = false;
         lander_init(&the_lander);
         map3();
+      } else if ((level == 4) && (announcement_drawn)) {
+        // erase level announcement
+        display_setCursor(LEVEL_CURSOR_X, LEVEL_CURSOR_Y);
+        display_setTextSize(LEVEL_SIZE);
+        display_setTextColor(DISPLAY_BLACK);
+        display_println("Level 4");
+        announcement_drawn = false;
+        lander_init(&the_lander);
+        the_lander.top_right.y = 150;
+        the_lander.top_left.y = 150;
+        the_lander.bottom_left.y = 158;
+        the_lander.bottom_right.y = 158;
+        the_lander.velocity_x = -0.8;
+        map4();
       }
-      lander_init(&the_lander);
-      display_drawLine(the_lander.top_left.x, the_lander.top_left.y,
-                       the_lander.top_right.x, the_lander.top_right.y,
-                       DISPLAY_GREEN);
-      display_drawLine(the_lander.top_right.x, the_lander.top_right.y,
-                       the_lander.bottom_right.x, the_lander.bottom_right.y,
-                       DISPLAY_CYAN);
-      display_drawLine(the_lander.bottom_right.x, the_lander.bottom_right.y,
-                       the_lander.bottom_left.x, the_lander.bottom_left.y,
-                       DISPLAY_CYAN);
-      display_drawLine(the_lander.bottom_left.x, the_lander.bottom_left.y,
-                       the_lander.top_left.x, the_lander.top_left.y,
-                       DISPLAY_CYAN);
-      display_drawPixel(the_lander.top_left.x, the_lander.top_left.y,
-                        DISPLAY_DARK_GREEN);
+      // display_drawLine(the_lander.top_left.x, the_lander.top_left.y,
+      //                  the_lander.top_right.x, the_lander.top_right.y,
+      //                  DISPLAY_GREEN);
+      // display_drawLine(the_lander.top_right.x, the_lander.top_right.y,
+      //                  the_lander.bottom_right.x, the_lander.bottom_right.y,
+      //                  DISPLAY_CYAN);
+      // display_drawLine(the_lander.bottom_right.x, the_lander.bottom_right.y,
+      //                  the_lander.bottom_left.x, the_lander.bottom_left.y,
+      //                  DISPLAY_CYAN);
+      // display_drawLine(the_lander.bottom_left.x, the_lander.bottom_left.y,
+      //                  the_lander.top_left.x, the_lander.top_left.y,
+      //                  DISPLAY_CYAN);
+      // display_drawPixel(the_lander.top_left.x, the_lander.top_left.y,
+      //                   DISPLAY_DARK_GREEN);
     }
     break;
   // INC_DEC transitions
   case GAMEPLAY:
-    if (gameover_control) {
+    if ((led_value & SWITCHES_SW0_MASK) != SWITCHES_SW0_MASK) {
+      currentState = MENU;
+      gameControl_init(TICK_PERIOD);
+      announcement_drawn = false;
+      level = 1;
+    } else if (gameover_control) {
       win_control = didPlayerWin();
       if (win_control) {
         display_fillScreen(DISPLAY_GREEN);
@@ -257,6 +281,13 @@ void gameControl_tick() {
       display_setTextColor(DISPLAY_WHITE);
       display_println("Level 3");
       announcement_drawn = true;
+    } else if ((level == 4) && (!announcement_drawn)) {
+      // draw level announcement
+      display_setCursor(LEVEL_CURSOR_X, LEVEL_CURSOR_Y);
+      display_setTextSize(LEVEL_SIZE);
+      display_setTextColor(DISPLAY_WHITE);
+      display_println("Level 4");
+      announcement_drawn = true;
     }
     transition_cnt++;
 
@@ -320,7 +351,7 @@ void gameControl_tick() {
     // testing rotations given preset rotation values
     if (the_lander.top_left.y <= 240) {
       if (!gameover_control) {
-        
+
         draw_lander(&the_lander);
 
         if (lastDrawLeft) {
@@ -350,13 +381,11 @@ void gameControl_tick() {
                               30;
           }
 
-          display_fillTriangle(0,
-                              (int)the_lander.top_left.y,
-                               15 + (triangle_scalar / 4),
-                              (int)the_lander.top_left.y + 5 + triangle_scalar,
-                              15 + (triangle_scalar / 4),
-                              (int)the_lander.top_left.y - 5 - triangle_scalar,
-                               DISPLAY_WHITE);
+          display_fillTriangle(
+              0, (int)the_lander.top_left.y, 15 + (triangle_scalar / 4),
+              (int)the_lander.top_left.y + 5 + triangle_scalar,
+              15 + (triangle_scalar / 4),
+              (int)the_lander.top_left.y - 5 - triangle_scalar, DISPLAY_WHITE);
 
           lastDrawLeft = true;
 
@@ -382,21 +411,20 @@ void gameControl_tick() {
 
           printf("triangle_scalar %f\t", triangle_scalar);
           if (the_lander.top_left.y >= -MAX_OFFSCREEN_CONSTANT && 0) {
-            triangle_scalar = (double)(MAX_OFFSCREEN_CONSTANT - triangle_scalar +
-                               (int)the_lander.top_left.y) /
-                              50.0;
+            triangle_scalar =
+                (double)(MAX_OFFSCREEN_CONSTANT - triangle_scalar +
+                         (int)the_lander.top_left.y) /
+                50.0;
           } else {
             triangle_scalar = 3;
           }
 
           display_fillTriangle(
-              (int)the_lander.top_left.x,
-              0,
+              (int)the_lander.top_left.x, 0,
               (int)the_lander.top_left.x + 15 - triangle_scalar,
-              18 + (triangle_scalar /4),
+              18 + (triangle_scalar / 4),
               (int)the_lander.top_left.x - 15 + triangle_scalar,
-              18 + (triangle_scalar /4),
-              DISPLAY_WHITE);
+              18 + (triangle_scalar / 4), DISPLAY_WHITE);
 
           printf("triangle_scalar %f\t", triangle_scalar);
           lastDrawTop = true;
@@ -415,18 +443,22 @@ void gameControl_tick() {
               (double)the_lander.bottom_left.y, the_lander.velocity_y);
         } else if (level == 2) {
           map2();
-          gameover_control = map2_collide(
-              the_lander.top_left.x, the_lander.top_right.x,
-              the_lander.bottom_right.x, the_lander.bottom_left.x,
-              the_lander.top_left.y, the_lander.top_right.y,
-              the_lander.bottom_right.y, the_lander.bottom_left.y, the_lander.velocity_y);
+          gameover_control =
+              map2_collide(the_lander.top_left.x, the_lander.top_right.x,
+                           the_lander.bottom_right.x, the_lander.bottom_left.x,
+                           the_lander.top_left.y, the_lander.top_right.y,
+                           the_lander.bottom_right.y, the_lander.bottom_left.y,
+                           the_lander.velocity_y);
         } else if (level == 3) {
           map3();
-          gameover_control = map3_collide(
-              the_lander.top_left.x, the_lander.top_right.x,
-              the_lander.bottom_right.x, the_lander.bottom_left.x,
-              the_lander.top_left.y, the_lander.top_right.y,
-              the_lander.bottom_right.y, the_lander.bottom_left.y, the_lander.velocity_y);
+          gameover_control =
+              map3_collide(the_lander.top_left.x, the_lander.top_right.x,
+                           the_lander.bottom_right.x, the_lander.bottom_left.x,
+                           the_lander.top_left.y, the_lander.top_right.y,
+                           the_lander.bottom_right.y, the_lander.bottom_left.y,
+                           the_lander.velocity_y);
+        } else if (level == 4) {
+          map4();
         }
       }
     }
@@ -440,8 +472,7 @@ void gameControl_tick() {
       thrust_x = 0;
       thrust_y = 0;
     }
-    
-    
+
     break;
   // fast delay transition
   case GAMEOVER:

@@ -3,6 +3,7 @@
 
 #define gravity 0.02
 #define THRUST_SCALER 0.1
+#define TICK_PERIOD 60E-3
 
 
 //TODO:: change these for our game to be slower these were copy pasted from the missiile command congif.h
