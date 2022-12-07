@@ -25,7 +25,7 @@ static bool lastDrawLeft = false;
 static bool lastDrawRight = false;
 static bool lastDrawTop = false;
 static long double triangle_scalar = 1;
-static int16_t level = 4;
+static int16_t level = 5;
 static double y_velocity = 0.9;
 static double x_velocity = -1;
 static bool tick_is_odd = true;
@@ -197,7 +197,7 @@ void gameControl_tick() {
       currentState = MENU;
       gameControl_init(TICK_PERIOD);
       announcement_drawn = false;
-      level = 1;
+      level = 5;
     }
     if (transition_cnt == transition_num_ticks) {
       transition_cnt = 0;
@@ -243,6 +243,20 @@ void gameControl_tick() {
         the_lander.bottom_right.y = 158;
         the_lander.velocity_x = -0.8;
         map4();
+      } else if ((level == 5) && (announcement_drawn)) {
+        // erase level announcement
+        display_setCursor(LEVEL_CURSOR_X, LEVEL_CURSOR_Y);
+        display_setTextSize(LEVEL_SIZE);
+        display_setTextColor(DISPLAY_BLACK);
+        display_println("Level 5");
+        announcement_drawn = false;
+        lander_init(&the_lander);
+        the_lander.top_right.y = 150;
+        the_lander.top_left.y = 150;
+        the_lander.bottom_left.y = 158;
+        the_lander.bottom_right.y = 158;
+        the_lander.velocity_x = -0.8;
+        map5();
       }
       // display_drawLine(the_lander.top_left.x, the_lander.top_left.y,
       //                  the_lander.top_right.x, the_lander.top_right.y,
@@ -266,7 +280,7 @@ void gameControl_tick() {
       currentState = MENU;
       gameControl_init(TICK_PERIOD);
       announcement_drawn = false;
-      level = 1;
+      level = 5;
     } else if (gameover_control) {
       win_control = didPlayerWin();
       if (win_control) {
@@ -295,7 +309,7 @@ void gameControl_tick() {
       currentState = MENU;
       erase_GameOver();
       gameover_drawn = false;
-      level = 4;
+      level = 5;
       lander_init(&the_lander);
 
       // draw menu
@@ -344,6 +358,13 @@ void gameControl_tick() {
       display_setTextSize(LEVEL_SIZE);
       display_setTextColor(DISPLAY_WHITE);
       display_println("Level 4");
+      announcement_drawn = true;
+    } else if ((level == 5) && (!announcement_drawn)) {
+      // draw level announcement
+      display_setCursor(LEVEL_CURSOR_X, LEVEL_CURSOR_Y);
+      display_setTextSize(LEVEL_SIZE);
+      display_setTextColor(DISPLAY_WHITE);
+      display_println("Level 5");
       announcement_drawn = true;
     }
     transition_cnt++;
@@ -536,6 +557,14 @@ void gameControl_tick() {
           map4();
           gameover_control =
               map4_collide(the_lander.top_left.x, the_lander.top_right.x,
+                           the_lander.bottom_right.x, the_lander.bottom_left.x,
+                           the_lander.top_left.y, the_lander.top_right.y,
+                           the_lander.bottom_right.y, the_lander.bottom_left.y,
+                           the_lander.velocity_y);
+        } else if (level == 5) {
+          map5();
+          gameover_control =
+              map5_collide(the_lander.top_left.x, the_lander.top_right.x,
                            the_lander.bottom_right.x, the_lander.bottom_left.x,
                            the_lander.top_left.y, the_lander.top_right.y,
                            the_lander.bottom_right.y, the_lander.bottom_left.y,
