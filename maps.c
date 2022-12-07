@@ -8,14 +8,14 @@
 bool win = false;
 
 void map1() {
-  //draw stars
-  display_drawPixel(50,183, DISPLAY_WHITE);
-  display_drawPixel(150,53, DISPLAY_WHITE);
-  display_drawPixel(190,123, DISPLAY_WHITE);
-  display_drawPixel(210,13, DISPLAY_WHITE);
-  display_drawPixel(300,200, DISPLAY_WHITE);
+  // draw stars
+  display_drawPixel(50, 183, DISPLAY_WHITE);
+  display_drawPixel(150, 53, DISPLAY_WHITE);
+  display_drawPixel(190, 123, DISPLAY_WHITE);
+  display_drawPixel(210, 13, DISPLAY_WHITE);
+  display_drawPixel(300, 200, DISPLAY_WHITE);
 
-  //draw ground
+  // draw ground
   display_drawLine(0, 240, 106, 220, DISPLAY_WHITE);
   display_drawLine(106, 220, 133, 220, DISPLAY_WHITE);
   display_drawLine(133, 220, 187, 220, DISPLAY_DARK_YELLOW);
@@ -24,15 +24,14 @@ void map1() {
 }
 
 void map2() {
-  //draw stars
-  display_drawPixel(50,183, DISPLAY_WHITE);
-  display_drawPixel(150,53, DISPLAY_WHITE);
-  display_drawPixel(190,123, DISPLAY_WHITE);
-  display_drawPixel(210,13, DISPLAY_WHITE);
-  display_drawPixel(300,100, DISPLAY_WHITE);
-  
+  // draw stars
+  display_drawPixel(50, 183, DISPLAY_WHITE);
+  display_drawPixel(150, 53, DISPLAY_WHITE);
+  display_drawPixel(190, 123, DISPLAY_WHITE);
+  display_drawPixel(210, 13, DISPLAY_WHITE);
+  display_drawPixel(300, 100, DISPLAY_WHITE);
 
-  //draw ground
+  // draw ground
   display_drawLine(0, 240, 100, 200, DISPLAY_WHITE);
   display_drawLine(100, 200, 160, 220, DISPLAY_WHITE);
   display_drawLine(160, 220, 190, 220, DISPLAY_DARK_YELLOW);
@@ -41,15 +40,14 @@ void map2() {
 }
 
 void map3() {
-  //draw stars
-  display_drawPixel(80,153, DISPLAY_WHITE);
-  display_drawPixel(150,53, DISPLAY_WHITE);
-  display_drawPixel(190,123, DISPLAY_WHITE);
-  display_drawPixel(210,13, DISPLAY_WHITE);
-  display_drawPixel(250,100, DISPLAY_WHITE);
+  // draw stars
+  display_drawPixel(80, 153, DISPLAY_WHITE);
+  display_drawPixel(150, 53, DISPLAY_WHITE);
+  display_drawPixel(190, 123, DISPLAY_WHITE);
+  display_drawPixel(210, 13, DISPLAY_WHITE);
+  display_drawPixel(250, 100, DISPLAY_WHITE);
 
-
-  //draw ground
+  // draw ground
   display_drawLine(0, 35, 50, 35, DISPLAY_WHITE);
   display_drawLine(50, 35, 50, 180, DISPLAY_WHITE);
   display_drawLine(50, 180, 100, 215, DISPLAY_WHITE);
@@ -60,6 +58,16 @@ void map3() {
   display_drawLine(250, 180, 280, 180, DISPLAY_WHITE);
   display_drawLine(280, 180, 300, 50, DISPLAY_WHITE);
   display_drawLine(300, 50, 320, 50, DISPLAY_WHITE);
+}
+
+void map4() {
+  display_drawLine(0, 235, 70, 235, DISPLAY_WHITE);
+  display_drawLine(70, 235, 100, 50, DISPLAY_WHITE);
+  display_drawLine(100, 50, 150, 150, DISPLAY_WHITE);
+  display_drawLine(150, 150, 170, 150, DISPLAY_WHITE);
+  display_drawLine(170, 150, 220, 50, DISPLAY_WHITE);
+  display_drawLine(220, 50, 250, 240, DISPLAY_WHITE);
+  display_drawLine(250, 235, 320, 235, DISPLAY_WHITE);
 }
 
 // TODO: once we have an official drawing with x,y points as part of the struct,
