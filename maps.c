@@ -64,10 +64,23 @@ void map4() {
   display_drawLine(0, 235, 70, 235, DISPLAY_WHITE);
   display_drawLine(70, 235, 100, 50, DISPLAY_WHITE);
   display_drawLine(100, 50, 150, 150, DISPLAY_WHITE);
-  display_drawLine(150, 150, 170, 150, DISPLAY_WHITE);
+  display_drawLine(150, 150, 170, 150, DISPLAY_DARK_YELLOW);
   display_drawLine(170, 150, 220, 50, DISPLAY_WHITE);
-  display_drawLine(220, 50, 250, 240, DISPLAY_WHITE);
+  display_drawLine(220, 50, 250, 235, DISPLAY_WHITE);
   display_drawLine(250, 235, 320, 235, DISPLAY_WHITE);
+}
+
+void map5() {
+  display_drawLine(0, 50, 40, 50, DISPLAY_WHITE);
+  display_drawLine(40, 50, 50, 100, DISPLAY_WHITE);
+  display_drawLine(50, 100, 60, 100, DISPLAY_DARK_YELLOW);
+  display_drawLine(60, 100, 90, 150, DISPLAY_WHITE);
+  display_drawLine(90, 150, 150, 230, DISPLAY_WHITE);
+  display_drawLine(150, 230, 200, 230, DISPLAY_WHITE);
+  display_drawLine(200, 230, 230, 130, DISPLAY_WHITE);
+  display_drawLine(230, 130, 250, 230, DISPLAY_WHITE);
+  display_drawLine(250, 230, 320, 230, DISPLAY_WHITE);
+
 }
 
 // TODO: once we have an official drawing with x,y points as part of the struct,
@@ -379,6 +392,129 @@ bool map3_collide(double x0, double x1, double x2, double x3, double y0,
     }
   } else if (((x0 >= 300) || (x3 >= 300))) {
     if ((y0 >= 50) || (y1 >= 50) || (y2 >= 50) || (y3 >= 50)) {
+      win = false;
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
+}
+
+bool map4_collide(double x0, double x1, double x2, double x3, double y0,
+                  double y1, double y2, double y3, double y_velocity) {
+
+  bool gameover = false;
+  if ((y0 >= 240.00) || (y1 >= 240.00) || (y2 >= 240.00) || (y3 >= 240.00)) {
+    win = false;
+    return true;
+  } else if ((y0 < 50) && (y1 < 50) && (y2 < 50) && (y3 < 50)) {
+    return false;
+  } else if (((x0 >= 0) || (x3 >= 0)) && ((x1 <= 70) || (x2 <= 70))) {
+    if ((y0 >= 235.00) || (y1 >= 235.00) || (y2 >= 235.00) || (y3 >= 235.00)) {
+      win = false;
+      return true;
+    } else {
+      return false;
+    }
+    // } else if (((x0 <= 70) || (x3 <= 70)) && ((x1 >= 70) || (x2 >= 70))) {
+    //   if ((y0 >= 235.00) || (y1 >= 666.667 - (6.16667 * x1)) ||
+    //       (y2 >= 666.667 - (6.16667 * x2)) || (y3 >= 235.00)) {
+    //     win = false;
+    //     return true;
+    //   } else {
+    //     return false;
+    //   }
+  } else if (((x0 >= 70) || (x3 >= 70)) && ((x1 <= 100) || (x2 <= 100))) {
+    if ((y0 >= 666.667 - (6.16667 * x0)) || (y1 >= 666.667 - (6.16667 * x1)) ||
+        (y2 >= 666.667 - (6.16667 * x2)) || (y3 >= 666.667 - (6.16667 * x3))) {
+      win = false;
+      return true;
+    } else {
+      return false;
+    }
+    // } else if (((x0 <= 100) || (x3 <= 100)) && ((x1 >= 100) || (x2 >= 100)))
+    // {
+    //   if ((y0 >= 666.667 - (6.16667 * x0)) || (y1 >= (2.00 * x1) - 150.00) ||
+    //       (y2 >= (2.00 * x2) - 150.00) || (y3 >= 666.667 - (6.16667 * x3))) {
+    //     win = false;
+    //     return true;
+    //   } else {
+    //     return false;
+    //   }
+  } else if (((x0 >= 100) || (x3 >= 100)) && ((x1 <= 150) || (x2 <= 150))) {
+    if ((y0 >= (2.00 * x0) - 150.00) || (y1 >= (2.00 * x1) - 150.00) ||
+        (y2 >= (2.00 * x2) - 150.00) || (y3 >= (2.00 * x3) - 150.00)) {
+      win = false;
+      return true;
+    } else {
+      return false;
+    }
+  } else if (((x0 <= 150) || (x3 <= 150)) && ((x1 >= 150) || (x2 >= 150))) {
+    if ((y0 >= (2.00 * x0) - 150.00) || (y1 >= 150.00) || (y2 >= 150.00) ||
+        (y3 >= (2.00 * x3) - 150.00)) {
+      win = false;
+      return true;
+    } else {
+      return false;
+    }
+  } else if (((x0 >= 150) || (x3 >= 150)) && ((x1 <= 170) || (x2 <= 170))) {
+    if ((y0 >= 150.00) || (y1 >= 150.00) || (y2 >= 150.00) || (y3 >= 150.00)) {
+      if ((y_velocity <= 0.6) && (y3 == y2)) {
+        win = true;
+        return true;
+      } else {
+        win = false;
+        return true;
+      }
+    } else {
+      return false;
+    }
+  } else if (((x0 <= 170) || (x3 <= 170)) && ((x1 >= 170) || (x2 >= 170))) {
+    if ((y0 >= 150.00) || (y1 >= 490 - (2.00 * x1)) ||
+        (y2 >= 490 - (2.00 * x2)) || (y3 >= 150.00)) {
+      win = false;
+      return true;
+    } else {
+      return false;
+    }
+  } else if (((x0 >= 170) || (x3 >= 170)) && ((x1 <= 220) || (x2 <= 220))) {
+    if ((y0 >= 490 - (2.00 * x0)) || (y1 >= 490 - (2.00 * x1)) ||
+        (y2 >= 490 - (2.00 * x2)) || (y3 >= 490 - (2.00 * x3))) {
+      win = false;
+      return true;
+    } else {
+      return false;
+    }
+    // } else if (((x0 <= 220) || (x3 <= 220)) && ((x1 >= 220) || (x2 >= 220)))
+    // {
+    //   if ((y0 >= 490 - (2.00 * x0)) || (y1 >= (6.16667 * x1) - 1306.67) ||
+    //       (y2 >= (6.16667 * x2) - 1306.67) || (y3 >= 490 - (2.00 * x3))) {
+    //     win = false;
+    //     return true;
+    //   } else {
+    //     return false;
+    //   }
+  } else if (((x0 >= 220) || (x3 >= 220)) && ((x1 <= 250) || (x2 <= 250))) {
+    if ((y0 >= (6.16667 * x0) - 1306.67) || (y1 >= (6.16667 * x1) - 1306.67) ||
+        (y2 >= (6.16667 * x2) - 1306.67) || (y3 >= (6.16667 * x3) - 1306.67)) {
+      win = false;
+      return true;
+    } else {
+      return false;
+    }
+    // } else if (((x0 <= 250) || (x3 <= 250)) && ((x1 >= 250) || (x2 >= 250)))
+    // {
+    //   if ((y0 >= 490 - (2.00 * x0)) || (y1 >= 235.00) || (y2 >= 235.00) ||
+    //       (y3 >= 490 - (2.00 * x3))) {
+    //     win = false;
+    //     return true;
+    //   } else {
+    //     return false;
+    //   }
+  } else if (((x0 >= 250) || (x3 >= 250))) {
+    if ((y0 >= 235.00) || (y1 >= 235.00) || (y2 >= 235.00) || (y3 >= 235.00)) {
       win = false;
       return true;
     } else {

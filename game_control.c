@@ -57,6 +57,109 @@ static uint16_t transition_cnt = 0;
 static uint16_t transition_num_ticks = 0;
 static uint8_t button_value = 0;
 
+void draw_Menu() {
+  display_setCursor(SET_X_CURSOR + 50, SET_Y_CURSOR);
+  display_setTextSize(6);
+  display_setTextColor(DISPLAY_WHITE);
+  display_println("LUNAR");
+  display_setCursor(SET_X_CURSOR + 35, SET_Y_CURSOR + 50);
+  display_setTextSize(6);
+  display_setTextColor(DISPLAY_WHITE);
+  display_println("LANDER");
+  display_setCursor(SET_X_CURSOR + 55, SET_Y_CURSOR + 110);
+  display_setTextSize(1);
+  display_setTextColor(DISPLAY_WHITE);
+  display_println("Instructions:");
+  display_setCursor(SET_X_CURSOR + 55, SET_Y_CURSOR + 130);
+  display_setTextSize(1);
+  display_setTextColor(DISPLAY_WHITE);
+  display_println("Push Button 0 to Rotate Left");
+  display_setCursor(SET_X_CURSOR + 55, SET_Y_CURSOR + 150);
+  display_setTextSize(1);
+  display_setTextColor(DISPLAY_WHITE);
+  display_println("Push Button 3 to Rotate Right");
+  display_setCursor(SET_X_CURSOR + 55, SET_Y_CURSOR + 170);
+  display_setTextSize(1);
+  display_setTextColor(DISPLAY_WHITE);
+  display_println("Push Button 1 to Accelerate");
+  display_setCursor(SET_X_CURSOR - 10, SET_Y_CURSOR + 190);
+  display_setTextSize(2);
+  display_setTextColor(DISPLAY_WHITE);
+  display_println("Flip Switch 0 up to Start");
+}
+
+void erase_Menu() {
+  display_setCursor(SET_X_CURSOR + 50, SET_Y_CURSOR);
+  display_setTextSize(6);
+  display_setTextColor(DISPLAY_BLACK);
+  display_println("LUNAR");
+  display_setCursor(SET_X_CURSOR + 35, SET_Y_CURSOR + 50);
+  display_setTextSize(6);
+  display_setTextColor(DISPLAY_BLACK);
+  display_println("LANDER");
+  display_setCursor(SET_X_CURSOR + 55, SET_Y_CURSOR + 110);
+  display_setTextSize(1);
+  display_setTextColor(DISPLAY_BLACK);
+  display_println("Instructions:");
+  display_setCursor(SET_X_CURSOR + 55, SET_Y_CURSOR + 130);
+  display_setTextSize(1);
+  display_setTextColor(DISPLAY_BLACK);
+  display_println("Push Button 0 to Rotate Left");
+  display_setCursor(SET_X_CURSOR + 55, SET_Y_CURSOR + 150);
+  display_setTextSize(1);
+  display_setTextColor(DISPLAY_BLACK);
+  display_println("Push Button 3 to Rotate Right");
+  display_setCursor(SET_X_CURSOR + 55, SET_Y_CURSOR + 170);
+  display_setTextSize(1);
+  display_setTextColor(DISPLAY_BLACK);
+  display_println("Push Button 1 to Accelerate");
+  display_setCursor(SET_X_CURSOR - 10, SET_Y_CURSOR + 190);
+  display_setTextSize(2);
+  display_setTextColor(DISPLAY_BLACK);
+  display_println("Flip Switch 0 up to Start");
+}
+
+void draw_GameOver() {
+  display_fillScreen(DISPLAY_BLACK);
+  buttons_init();
+  display_setCursor(SET_X_CURSOR + 60, SET_Y_CURSOR);
+  display_setTextSize(6);
+  display_setTextColor(DISPLAY_RED);
+  display_println("GAME");
+  display_setCursor(SET_X_CURSOR + 60, SET_Y_CURSOR + 50);
+  display_setTextSize(6);
+  display_setTextColor(DISPLAY_RED);
+  display_println("OVER");
+  display_setCursor(SET_X_CURSOR + 8, SET_Y_CURSOR + 170);
+  display_setTextSize(2);
+  display_setTextColor(DISPLAY_WHITE);
+  display_println("Flip Switch 0 down to");
+  display_setCursor(SET_X_CURSOR + 90, SET_Y_CURSOR + 190);
+  display_setTextSize(2);
+  display_setTextColor(DISPLAY_WHITE);
+  display_println("restart");
+}
+
+void erase_GameOver() {
+  // erase game over
+  display_setCursor(SET_X_CURSOR + 60, SET_Y_CURSOR);
+  display_setTextSize(6);
+  display_setTextColor(DISPLAY_BLACK);
+  display_println("GAME");
+  display_setCursor(SET_X_CURSOR + 60, SET_Y_CURSOR + 50);
+  display_setTextSize(6);
+  display_setTextColor(DISPLAY_BLACK);
+  display_println("OVER");
+  display_setCursor(SET_X_CURSOR + 8, SET_Y_CURSOR + 170);
+  display_setTextSize(2);
+  display_setTextColor(DISPLAY_BLACK);
+  display_println("Flip Switch 0 down to");
+  display_setCursor(SET_X_CURSOR + 90, SET_Y_CURSOR + 190);
+  display_setTextSize(2);
+  display_setTextColor(DISPLAY_BLACK);
+  display_println("restart");
+}
+
 // Initialize the game control logic
 // This function will initialize the lander and the map.
 void gameControl_init(double period_s) {
@@ -66,18 +169,7 @@ void gameControl_init(double period_s) {
   switches_init();
   display_fillScreen(DISPLAY_BLACK);
   buttons_init();
-  display_setCursor(SET_X_CURSOR + 50, SET_Y_CURSOR);
-  display_setTextSize(6);
-  display_setTextColor(DISPLAY_WHITE);
-  display_println("LUNAR");
-  display_setCursor(SET_X_CURSOR + 35, SET_Y_CURSOR + 50);
-  display_setTextSize(6);
-  display_setTextColor(DISPLAY_WHITE);
-  display_println("LANDER");
-  display_setCursor(SET_X_CURSOR - 5, SET_Y_CURSOR + 170);
-  display_setTextSize(2);
-  display_setTextColor(DISPLAY_WHITE);
-  display_println("Flip Switch 0 up to Start");
+  draw_Menu();
   transition_cnt = 0;
   transition_num_ticks = TRANSITION_TIME / period_s;
 }
@@ -96,18 +188,7 @@ void gameControl_tick() {
     if ((led_value & SWITCHES_SW0_MASK) == SWITCHES_SW0_MASK) {
       currentState = TRANSITION;
       // erase menu code
-      display_setCursor(SET_X_CURSOR + 50, SET_Y_CURSOR);
-      display_setTextSize(6);
-      display_setTextColor(DISPLAY_BLACK);
-      display_println("LUNAR");
-      display_setCursor(SET_X_CURSOR + 35, SET_Y_CURSOR + 50);
-      display_setTextSize(6);
-      display_setTextColor(DISPLAY_BLACK);
-      display_println("LANDER");
-      display_setCursor(SET_X_CURSOR - 5, SET_Y_CURSOR + 170);
-      display_setTextSize(2);
-      display_setTextColor(DISPLAY_BLACK);
-      display_println("Flip Switch 0 up to Start");
+      erase_Menu();
     }
     break;
   // transition state  transitions
@@ -197,7 +278,7 @@ void gameControl_tick() {
         currentState = TRANSITION;
         display_fillScreen(DISPLAY_BLACK);
       } else if (!win_control) {
-        //draw explosion
+        // draw explosion
         draw_explosion(&the_lander);
 
         currentState = GAMEOVER;
@@ -212,40 +293,13 @@ void gameControl_tick() {
     if ((led_value & SWITCHES_SW0_MASK) != SWITCHES_SW0_MASK) {
 
       currentState = MENU;
-      // erase game over
-      display_setCursor(SET_X_CURSOR + 60, SET_Y_CURSOR);
-      display_setTextSize(6);
-      display_setTextColor(DISPLAY_BLACK);
-      display_println("GAME");
-      display_setCursor(SET_X_CURSOR + 60, SET_Y_CURSOR + 50);
-      display_setTextSize(6);
-      display_setTextColor(DISPLAY_BLACK);
-      display_println("OVER");
-      display_setCursor(SET_X_CURSOR + 8, SET_Y_CURSOR + 170);
-      display_setTextSize(2);
-      display_setTextColor(DISPLAY_BLACK);
-      display_println("Flip Switch 0 down to");
-      display_setCursor(SET_X_CURSOR + 90, SET_Y_CURSOR + 190);
-      display_setTextSize(2);
-      display_setTextColor(DISPLAY_BLACK);
-      display_println("restart");
+      erase_GameOver();
       gameover_drawn = false;
-      level = 1;
+      level = 4;
       lander_init(&the_lander);
 
       // draw menu
-      display_setCursor(SET_X_CURSOR + 50, SET_Y_CURSOR);
-      display_setTextSize(6);
-      display_setTextColor(DISPLAY_WHITE);
-      display_println("LUNAR");
-      display_setCursor(SET_X_CURSOR + 35, SET_Y_CURSOR + 50);
-      display_setTextSize(6);
-      display_setTextColor(DISPLAY_WHITE);
-      display_println("LANDER");
-      display_setCursor(SET_X_CURSOR - 5, SET_Y_CURSOR + 170);
-      display_setTextSize(2);
-      display_setTextColor(DISPLAY_WHITE);
-      display_println("Flip Switch 0 up to Start");
+      draw_Menu();
     }
     break;
   // default to catch errors
@@ -316,38 +370,30 @@ void gameControl_tick() {
     display_setCursor(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y);
 
     uint8_t button_value = buttons_read();
-    
-      display_drawRoundRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y + 10,
-                            101, 10, 2, DISPLAY_WHITE);
+
+    display_drawRoundRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y + 10, 101,
+                          10, 2, DISPLAY_WHITE);
 
     // change fuel text color based in how much fuel is left
     if (the_lander.fuel > 500) {
-                            
+
       display_fillRoundRect(FUEL_TEXT_CURSOR_X + 35 + the_lander.fuel / 10,
-                            FUEL_TEXT_CURSOR_Y + 10,
-                            1,
-                            10,
-                            2,
-                            DISPLAY_BLACK);
+                            FUEL_TEXT_CURSOR_Y + 10, 1, 10, 2, DISPLAY_BLACK);
       display_fillRoundRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y + 10,
                             the_lander.fuel / 10, 10, 2, DISPLAY_WHITE);
 
-      //display fuel number
+      // display fuel number
       display_fillRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y, 30, 10,
                        DISPLAY_BLACK);
       display_printDecimalInt(the_lander.fuel);
     } else if (the_lander.fuel > 300 && the_lander.fuel <= 500) {
       display_fillRoundRect(FUEL_TEXT_CURSOR_X + 35 + the_lander.fuel / 10,
-                            FUEL_TEXT_CURSOR_Y + 10,
-                            1,
-                            10,
-                            2,
-                            DISPLAY_BLACK);
+                            FUEL_TEXT_CURSOR_Y + 10, 1, 10, 2, DISPLAY_BLACK);
 
       display_fillRoundRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y + 10,
                             the_lander.fuel / 10, 10, 2, DISPLAY_YELLOW);
 
-      //display fuel number
+      // display fuel number
       display_setTextColor(DISPLAY_YELLOW);
       display_fillRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y, 30, 10,
                        DISPLAY_BLACK);
@@ -355,16 +401,12 @@ void gameControl_tick() {
 
     } else if (the_lander.fuel >= 0 && the_lander.fuel <= 300) {
       display_fillRoundRect(FUEL_TEXT_CURSOR_X + 35 + the_lander.fuel / 10,
-                            FUEL_TEXT_CURSOR_Y + 10,
-                            1,
-                            10,
-                            2,
-                            DISPLAY_BLACK);
+                            FUEL_TEXT_CURSOR_Y + 10, 1, 10, 2, DISPLAY_BLACK);
 
       display_fillRoundRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y + 10,
                             the_lander.fuel / 10, 10, 2, DISPLAY_RED);
 
-      //display fuel number
+      // display fuel number
       display_setTextColor(DISPLAY_RED);
       display_fillRect(FUEL_TEXT_CURSOR_X + 35, FUEL_TEXT_CURSOR_Y, 30, 10,
                        DISPLAY_BLACK);
@@ -492,6 +534,12 @@ void gameControl_tick() {
                            the_lander.velocity_y);
         } else if (level == 4) {
           map4();
+          gameover_control =
+              map4_collide(the_lander.top_left.x, the_lander.top_right.x,
+                           the_lander.bottom_right.x, the_lander.bottom_left.x,
+                           the_lander.top_left.y, the_lander.top_right.y,
+                           the_lander.bottom_right.y, the_lander.bottom_left.y,
+                           the_lander.velocity_y);
         }
       }
     }
@@ -510,24 +558,7 @@ void gameControl_tick() {
   // fast delay transition
   case GAMEOVER:
     if (!gameover_drawn) {
-      display_fillScreen(DISPLAY_BLACK);
-      buttons_init();
-      display_setCursor(SET_X_CURSOR + 60, SET_Y_CURSOR);
-      display_setTextSize(6);
-      display_setTextColor(DISPLAY_RED);
-      display_println("GAME");
-      display_setCursor(SET_X_CURSOR + 60, SET_Y_CURSOR + 50);
-      display_setTextSize(6);
-      display_setTextColor(DISPLAY_RED);
-      display_println("OVER");
-      display_setCursor(SET_X_CURSOR + 8, SET_Y_CURSOR + 170);
-      display_setTextSize(2);
-      display_setTextColor(DISPLAY_WHITE);
-      display_println("Flip Switch 0 down to");
-      display_setCursor(SET_X_CURSOR + 90, SET_Y_CURSOR + 190);
-      display_setTextSize(2);
-      display_setTextColor(DISPLAY_WHITE);
-      display_println("restart");
+      draw_GameOver();
       gameover_drawn = true;
     }
     break;
