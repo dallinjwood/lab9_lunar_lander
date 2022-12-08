@@ -72,11 +72,11 @@ void draw_Menu() {
   display_setCursor(SET_X_CURSOR + 55, SET_Y_CURSOR + 130);
   display_setTextSize(1);
   display_setTextColor(DISPLAY_WHITE);
-  display_println("Push Button 0 to Rotate Left");
+  display_println("Push Button 0 to Rotate Right");
   display_setCursor(SET_X_CURSOR + 55, SET_Y_CURSOR + 150);
   display_setTextSize(1);
   display_setTextColor(DISPLAY_WHITE);
-  display_println("Push Button 3 to Rotate Right");
+  display_println("Push Button 3 to Rotate Left");
   display_setCursor(SET_X_CURSOR + 55, SET_Y_CURSOR + 170);
   display_setTextSize(1);
   display_setTextColor(DISPLAY_WHITE);
@@ -419,7 +419,6 @@ void gameControl_tick() {
   // gameplay actions
   case GAMEPLAY:
     button_value = buttons_read();
-
 
     // fuel text cursor
     display_setTextColor(DISPLAY_WHITE);
