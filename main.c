@@ -17,18 +17,6 @@ void game_isr() {
 
 int main() {
 
-  double value;
-  double result = 69;
-
-  /* Assign the value we will find the tan of */
-  value = 0.5;
-
-  /* Calculate the Tangent of value */
-  result = tan(value);
-
-  /* Display the result of the calculation */
-  printf("The Tangent of %f is %f\n", value, result);
-
   display_init();
   gameControl_init(TICK_PERIOD);
 
