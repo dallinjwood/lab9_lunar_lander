@@ -103,11 +103,11 @@ void erase_Menu() {
   display_setCursor(SET_X_CURSOR + 55, SET_Y_CURSOR + 130);
   display_setTextSize(1);
   display_setTextColor(DISPLAY_BLACK);
-  display_println("Push Button 0 to Rotate Left");
+  display_println("Push Button 0 to Rotate Right");
   display_setCursor(SET_X_CURSOR + 55, SET_Y_CURSOR + 150);
   display_setTextSize(1);
   display_setTextColor(DISPLAY_BLACK);
-  display_println("Push Button 3 to Rotate Right");
+  display_println("Push Button 3 to Rotate Left");
   display_setCursor(SET_X_CURSOR + 55, SET_Y_CURSOR + 170);
   display_setTextSize(1);
   display_setTextColor(DISPLAY_BLACK);
@@ -290,16 +290,11 @@ void gameControl_tick() {
         display_println("Level 5");
         announcement_drawn = false;
         lander_init(&the_lander);
-        the_lander.top_left.x = 53;
-        the_lander.top_left.y = 87;
-        the_lander.top_right.x = 57;
-        the_lander.top_right.y = 87;
-        the_lander.bottom_left.x = 51;
-        the_lander.bottom_left.y = 95;
-        the_lander.bottom_right.x = 60;
-        the_lander.bottom_right.y = 95;
-        the_lander.velocity_x = 0;
-        the_lander.velocity_y = 0.2;
+        the_lander.top_right.y = 150;
+        the_lander.top_left.y = 150;
+        the_lander.bottom_left.y = 158;
+        the_lander.bottom_right.y = 158;
+        the_lander.velocity_x = -0.8;
         map5();
       }
       // display_drawLine(the_lander.top_left.x, the_lander.top_left.y,
@@ -425,12 +420,6 @@ void gameControl_tick() {
   case GAMEPLAY:
     button_value = buttons_read();
 
-    // printf("vertical thrust: %f\n",get_thrust_y(&the_lander));
-    // printf("horizontal thrust: %f\n\n",get_thrust_x(&the_lander));
-    printf("vertical velocity: %f\t", the_lander.velocity_y);
-    // printf("Theta: %f\n", the_lander.angle);
-    // printf("horizontal velocity: %f\n\n", the_lander.velocity_x);
-    // printf("NOT DEAD\n");
 
     // fuel text cursor
     display_setTextColor(DISPLAY_WHITE);
@@ -484,8 +473,6 @@ void gameControl_tick() {
                        DISPLAY_BLACK);
       display_printDecimalInt(the_lander.fuel);
     }
-
-    printf("Fuel: %d \n", the_lander.fuel);
     // decrease fuel when button is being pressed
     if ((button_value & BUTTONS_BTN1_MASK) == BUTTONS_BTN1_MASK &&
         (the_lander.fuel > 0)) {
@@ -556,7 +543,6 @@ void gameControl_tick() {
         } else if ((the_lander.top_left.y <= -10) ||
                    (the_lander.bottom_left.y <= -10)) {
 
-          printf("triangle_scalar %f\t", triangle_scalar);
           if (the_lander.top_left.y >= -MAX_OFFSCREEN_CONSTANT && 0) {
             triangle_scalar =
                 (double)(MAX_OFFSCREEN_CONSTANT - triangle_scalar +
@@ -573,7 +559,6 @@ void gameControl_tick() {
               (int)the_lander.top_left.x - 15 + triangle_scalar,
               18 + (triangle_scalar / 4), DISPLAY_WHITE);
 
-          printf("triangle_scalar %f\t", triangle_scalar);
           lastDrawTop = true;
         }
 
