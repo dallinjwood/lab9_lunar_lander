@@ -25,7 +25,7 @@ static bool lastDrawLeft = false;
 static bool lastDrawRight = false;
 static bool lastDrawTop = false;
 static long double triangle_scalar = 1;
-static int16_t level = 5;
+static int16_t level = 1;
 static double y_velocity = 0.9;
 static double x_velocity = -1;
 static bool tick_is_odd = true;
@@ -35,7 +35,6 @@ static int8_t rotate = 0;
 
 static bool gameover_control = false;
 static bool win_control = false;
-static bool next_level = false;
 static bool announcement_drawn = false;
 static bool gameover_drawn = false;
 
@@ -160,6 +159,46 @@ void erase_GameOver() {
   display_println("restart");
 }
 
+void draw_Win() {
+  display_fillScreen(DISPLAY_BLACK);
+  buttons_init();
+  display_setCursor(SET_X_CURSOR + 80, SET_Y_CURSOR);
+  display_setTextSize(6);
+  display_setTextColor(DISPLAY_GREEN);
+  display_println("YOU");
+  display_setCursor(SET_X_CURSOR + 80, SET_Y_CURSOR + 50);
+  display_setTextSize(6);
+  display_setTextColor(DISPLAY_GREEN);
+  display_println("WIN");
+  display_setCursor(SET_X_CURSOR + 8, SET_Y_CURSOR + 170);
+  display_setTextSize(2);
+  display_setTextColor(DISPLAY_WHITE);
+  display_println("Flip Switch 0 down to");
+  display_setCursor(SET_X_CURSOR + 90, SET_Y_CURSOR + 190);
+  display_setTextSize(2);
+  display_setTextColor(DISPLAY_WHITE);
+  display_println("restart");
+}
+
+void erase_Win() {
+  display_setCursor(SET_X_CURSOR + 80, SET_Y_CURSOR);
+  display_setTextSize(6);
+  display_setTextColor(DISPLAY_BLACK);
+  display_println("YOU");
+  display_setCursor(SET_X_CURSOR + 80, SET_Y_CURSOR + 50);
+  display_setTextSize(6);
+  display_setTextColor(DISPLAY_BLACK);
+  display_println("WIN");
+  display_setCursor(SET_X_CURSOR + 8, SET_Y_CURSOR + 170);
+  display_setTextSize(2);
+  display_setTextColor(DISPLAY_BLACK);
+  display_println("Flip Switch 0 down to");
+  display_setCursor(SET_X_CURSOR + 90, SET_Y_CURSOR + 190);
+  display_setTextSize(2);
+  display_setTextColor(DISPLAY_BLACK);
+  display_println("restart");
+}
+
 // Initialize the game control logic
 // This function will initialize the lander and the map.
 void gameControl_init(double period_s) {
@@ -197,7 +236,7 @@ void gameControl_tick() {
       currentState = MENU;
       gameControl_init(TICK_PERIOD);
       announcement_drawn = false;
-      level = 5;
+      level = 1;
     }
     if (transition_cnt == transition_num_ticks) {
       transition_cnt = 0;
@@ -251,11 +290,16 @@ void gameControl_tick() {
         display_println("Level 5");
         announcement_drawn = false;
         lander_init(&the_lander);
-        the_lander.top_right.y = 150;
-        the_lander.top_left.y = 150;
-        the_lander.bottom_left.y = 158;
-        the_lander.bottom_right.y = 158;
-        the_lander.velocity_x = -0.8;
+        the_lander.top_left.x = 53;
+        the_lander.top_left.y = 87;
+        the_lander.top_right.x = 57;
+        the_lander.top_right.y = 87;
+        the_lander.bottom_left.x = 51;
+        the_lander.bottom_left.y = 95;
+        the_lander.bottom_right.x = 60;
+        the_lander.bottom_right.y = 95;
+        the_lander.velocity_x = 0;
+        the_lander.velocity_y = 0.2;
         map5();
       }
       // display_drawLine(the_lander.top_left.x, the_lander.top_left.y,
@@ -280,17 +324,19 @@ void gameControl_tick() {
       currentState = MENU;
       gameControl_init(TICK_PERIOD);
       announcement_drawn = false;
-      level = 5;
+      level = 1;
     } else if (gameover_control) {
       win_control = didPlayerWin();
-      if (win_control) {
+      if (win_control && (level != 5)) {
         display_fillScreen(DISPLAY_GREEN);
         level++;
         gameover_control = false;
         win_control = false;
-        next_level = true;
         currentState = TRANSITION;
         display_fillScreen(DISPLAY_BLACK);
+      } else if (win_control && (level == 5)) {
+        currentState = GAMEOVER;
+        gameover_control = false;
       } else if (!win_control) {
         // draw explosion
         draw_explosion(&the_lander);
@@ -298,18 +344,23 @@ void gameControl_tick() {
         currentState = GAMEOVER;
         gameover_control = false;
         win_control = false;
-        next_level = true;
       }
     }
     break;
   // fast delay transition
   case GAMEOVER:
     if ((led_value & SWITCHES_SW0_MASK) != SWITCHES_SW0_MASK) {
-
       currentState = MENU;
-      erase_GameOver();
-      gameover_drawn = false;
-      level = 5;
+      if (win_control) {
+        erase_Win();
+        gameover_drawn = false;
+        level = 1;
+        win_control = false;
+      } else {
+        erase_GameOver();
+        gameover_drawn = false;
+        level = 1;
+      }
       lander_init(&the_lander);
 
       // draw menu
@@ -587,7 +638,11 @@ void gameControl_tick() {
   // fast delay transition
   case GAMEOVER:
     if (!gameover_drawn) {
-      draw_GameOver();
+      if (win_control) {
+        draw_Win();
+      } else {
+        draw_GameOver();
+      }
       gameover_drawn = true;
     }
     break;
